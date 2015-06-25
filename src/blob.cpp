@@ -21,9 +21,9 @@ void CoordVect::set(double x_new, double y_new)
 	y = y_new;
 }
 
-void CoordVect::set(CoordVect *set_vect)
+void CoordVect::set(CoordVect &set_vect)
 {
-	CoordVect::set(set_vect->x, set_vect->y);
+	CoordVect::set(set_vect.x, set_vect.y);
 }
 
 void CoordVect::add(double x_add, double y_add)
@@ -32,9 +32,9 @@ void CoordVect::add(double x_add, double y_add)
 	y += y_add;
 }
 
-void CoordVect::add(CoordVect *add_vect)
+void CoordVect::add(CoordVect &add_vect)
 {
-	CoordVect::add(add_vect->x, add_vect->y);
+	CoordVect::add(add_vect.x, add_vect.y);
 }
 
 void CoordVect::sub(double x_sub, double y_sub)
@@ -43,9 +43,9 @@ void CoordVect::sub(double x_sub, double y_sub)
 	y -= y_sub;
 }
 
-void CoordVect::sub(CoordVect *sub_vect)
+void CoordVect::sub(CoordVect &sub_vect)
 {
-	CoordVect::sub(sub_vect->x, sub_vect->y);
+	CoordVect::sub(sub_vect.x, sub_vect.y);
 }
 
 double CoordVect::rads(void)
@@ -92,7 +92,7 @@ void Blob::setPos(double x_new, double y_new)
  	pos.set(x_new, y_new);
 }
 
-void Blob::setPos(CoordVect *set_vect)
+void Blob::setPos(CoordVect &set_vect)
 {
 	pos.set(set_vect);
 }
@@ -102,7 +102,7 @@ void Blob::addPos(double x_add, double y_add)
 	pos.add(x_add, y_add);
 }
 
-void Blob::addPos(CoordVect *add_vect)
+void Blob::addPos(CoordVect &add_vect)
 {
 	pos.add(add_vect);
 }
@@ -112,12 +112,12 @@ void Blob::setVel(double x_new, double y_new)
 	vel.set(x_new, y_new);
 }
 
-void Blob::setVel(CoordVect *add_vect)
+void Blob::setVel(CoordVect &add_vect)
 {
 	vel.set(add_vect);
 }
 
-void Blob::addVel(CoordVect *add_vect)
+void Blob::addVel(CoordVect &add_vect)
 {
 	vel.add(add_vect);
 }
@@ -128,7 +128,7 @@ void Blob::update(void)
 	double rads = vel.rads();
 	CoordVect fric(sim::friction*cos(rads), sim::friction*sin(rads));
 	CoordVect newVel(vel);
-	newVel.sub(&fric);
+	newVel.sub(fric);
 	if (vel.x > 0.0)
 		newVel.x = max(0.0, newVel.x);
 	else if (vel.x <= 0.0)
@@ -137,8 +137,8 @@ void Blob::update(void)
 		newVel.y = max(0.0, newVel.y);
 	else if (vel.y <= 0.0)
 		newVel.y = min(0.0, newVel.y);
-	vel.set(&newVel);
+	vel.set(newVel);
 
 	/* Update position */
-	pos.add(&vel);
+	pos.add(vel);
 }
