@@ -1,6 +1,14 @@
-#include "blobs.h"
+/* DOIT:
+ * - Use ampersand references instead of pointer references for
+ *   add and subtract functions for CoordVect.
+ * - Enable CoordVect to store ints as well as doubles.
+ */
 
-using namespace std;
+#define _USE_MATH_DEFINES
+#include "math.h"
+#include "blobs.h"
+#include "general.h"
+#include "simulation.h"
 
 CoordVect::CoordVect(double x_new, double y_new)
 {
@@ -27,6 +35,38 @@ void CoordVect::add(double x_add, double y_add)
 void CoordVect::add(CoordVect *add_vect)
 {
 	CoordVect::add(add_vect->x, add_vect->y);
+}
+
+void CoordVect::sub(double x_sub, double y_sub)
+{
+	x -= x_sub;
+	y -= y_sub;
+}
+
+void CoordVect::sub(CoordVect *sub_vect)
+{
+	CoordVect::sub(sub_vect->x, sub_vect->y);
+}
+
+double CoordVect::rads(void)
+{
+	if (x == 0.0) {
+		if (y > 0.0)
+			return 0.5*M_PI;
+		else if (y < 0.0)
+			return 1.5*M_PI;
+		else
+			return 0.0;
+	}
+	double r;
+	r = atan(y/x);
+	if (x < 0.0 && y >= 0.0)
+		r += M_PI;
+	else if (x < 0.0 && y < 0.0)
+		r += M_PI;
+	else if (x > 0.0 && y < 0.0)
+		r = 2.0*M_PI + r;
+	return r;
 }
 
 
@@ -80,4 +120,25 @@ void Blob::setVel(CoordVect *add_vect)
 void Blob::addVel(CoordVect *add_vect)
 {
 	vel.add(add_vect);
+}
+
+void Blob::update(void)
+{
+	/* Apply friction */
+	double rads = vel.rads();
+	CoordVect fric(sim::friction*cos(rads), sim::friction*sin(rads));
+	CoordVect newVel(vel);
+	newVel.sub(&fric);
+	if (vel.x > 0.0)
+		newVel.x = max(0.0, newVel.x);
+	else if (vel.x <= 0.0)
+		newVel.x = min(0.0, newVel.x);
+	if (vel.y > 0.0)
+		newVel.y = max(0.0, newVel.y);
+	else if (vel.y <= 0.0)
+		newVel.y = min(0.0, newVel.y);
+	vel.set(&newVel);
+
+	/* Update position */
+	pos.add(&vel);
 }

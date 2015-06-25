@@ -1,8 +1,6 @@
 #ifndef BLOBS_H
 #define BLOBS_H
 
-using namespace std;
-
 class CoordVect
 {
  public:
@@ -14,6 +12,9 @@ class CoordVect
 	void set(CoordVect *set_vect);
 	void add(double x_add, double y_add);
 	void add(CoordVect *add_vect);
+	void sub(double x_sub, double y_sub);
+	void sub(CoordVect *sub_vect);
+	double rads(void);
 };
 
 class Blob
@@ -23,7 +24,7 @@ public:
 	CoordVect vel;
 	double size;
 
-	Blob(double size_new = 0, double x_new = 0, double y_new = 0);
+	Blob(double size_new = 1, double x_new = 0, double y_new = 0);
 	void setSize(double size_set);
 	void addSize(double size_add);
 	void setPos(double x_new, double y_new);
@@ -34,6 +35,12 @@ public:
 	void setVel(CoordVect *set_vect);
 	void addVel(double x_add, double y_add);
 	void addVel(CoordVect *add_vect);
+	void update(void);
+};
+
+struct Food {
+	CoordVect pos;
+	double size;
 };
 
 #endif
