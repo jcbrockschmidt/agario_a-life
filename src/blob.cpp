@@ -26,6 +26,16 @@ void CoordVect::set(CoordVect &set_vect)
 	CoordVect::set(set_vect.x, set_vect.y);
 }
 
+void set_x(double x_new)
+{
+	x = x_new;
+}
+
+void set_y(double y_new)
+{
+	y = y_new
+}
+
 void CoordVect::add(double x_add, double y_add)
 {
 	x += x_add;
@@ -139,6 +149,44 @@ void Blob::update(void)
 		newVel.y = min(0.0, newVel.y);
 	vel.set(newVel);
 
-	/* Update position */
+	/* Apply velocity */
 	pos.add(vel);
+
+	/* Bounds correction */
+	if (newPos.x < 0.0) {
+		pos.set_x(0.0);
+		if (vel.x < 0.0) vel.set_x(0.0);
+		vel.set_x(0.0);
+	} else if (newPos.x + size > sim::bounds.x) {
+		pos.set_x(sim::bounds.x - size);
+		if (vel.x > 0.0) vel.set_x(0.0);
+	}
+	if (newPos.y < 0.0) {
+		pos.set_y(0.0);
+		if (vel.y < 0.0) vel.set_y(0.0);
+		vel.set_y(0.0);
+	} else if (newPos.y + size > sim::bounds.y) {
+		pos.set_y(sim::bounds.y - size);
+		if (vel.y > 0.0) vel.set_y(0.0);
+	}
+}
+
+bool testAABBAABB(double x1, double y1, double w1, double h1,
+	  double x2, double y2, double w2, double h2)
+{
+	if (x1 + w1 < x2)
+		return false;
+	else if (x2 + w2 < x1)
+		return false;
+	else if (y1 + w1 < y2)
+		return false;
+	else if (y2 + w2 < y1)
+		return false;
+	else
+		return true;
+}
+
+bool testAABBAABB(CoordVect &vec1, double side1, CoordVect &vec2, double side2)
+{
+	return AABB(vec1.x, vec1.y, side1, side1, vec2.x, vec2.y, side2, side2);
 }
