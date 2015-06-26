@@ -1,24 +1,32 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
+#include <vector>
 #include "blobs.h"
 
 namespace sim
 {
-	const int maxPop = 50;
+	const int initPop = 1;
 	const CoordVect bounds(1000.0, 1000.0);
-        extern Blob *pop;
+        extern std::vector<Blob> pop;
 	extern double friction;
 
 	/**
-	   Initializes the simulation.
+	   Initializes the simulation. Should only be called once.
 	*/
 	void init(void);
 
 	/**
-	   Cleans up leftover data from simulation.
+	   Resets/re-initializes simulation.
 	*/
-	void cleanUp(void);
+	void reset(void);
+
+	/**
+	   Kills of a member of the population
+
+	   @param b index of blob in population.
+	 */
+        bool kill(unsigned int b);
 
 	/**
 	   Runs the simulation for 1 tick.

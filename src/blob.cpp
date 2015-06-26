@@ -1,7 +1,5 @@
 /* DOIT:
- * - Use ampersand references instead of pointer references for
- *   add and subtract functions for CoordVect.
- * - Enable CoordVect to store ints as well as doubles.
+ * - Enable CoordVect to store ints as well as doubles. <- Needed?
  */
 
 #define _USE_MATH_DEFINES
@@ -26,14 +24,14 @@ void CoordVect::set(CoordVect &set_vect)
 	CoordVect::set(set_vect.x, set_vect.y);
 }
 
-void set_x(double x_new)
+void CoordVect::set_x(double x_new)
 {
 	x = x_new;
 }
 
-void set_y(double y_new)
+void CoordVect::set_y(double y_new)
 {
-	y = y_new
+	y = y_new;
 }
 
 void CoordVect::add(double x_add, double y_add)
@@ -138,19 +136,20 @@ void Blob::update(void)
 	double rads = vel.rads();
 	CoordVect fric(sim::friction*cos(rads), sim::friction*sin(rads));
 	CoordVect newVel(vel);
+	CoordVect newPos(pos);
 	newVel.sub(fric);
-	if (vel.x > 0.0)
+	if (vel.x >= 0.0)
 		newVel.x = max(0.0, newVel.x);
-	else if (vel.x <= 0.0)
+	else if (vel.x < 0.0)
 		newVel.x = min(0.0, newVel.x);
-	if (vel.y > 0.0)
+	if (vel.y >= 0.0)
 		newVel.y = max(0.0, newVel.y);
-	else if (vel.y <= 0.0)
+	else if (vel.y < 0.0)
 		newVel.y = min(0.0, newVel.y);
 	vel.set(newVel);
 
 	/* Apply velocity */
-	pos.add(vel);
+	newPos.add(vel);
 
 	/* Bounds correction */
 	if (newPos.x < 0.0) {
@@ -169,6 +168,9 @@ void Blob::update(void)
 		pos.set_y(sim::bounds.y - size);
 		if (vel.y > 0.0) vel.set_y(0.0);
 	}
+
+	/* Apply changes to position */
+	pos.set(newPos);
 }
 
 bool testAABBAABB(double x1, double y1, double w1, double h1,
@@ -188,5 +190,5 @@ bool testAABBAABB(double x1, double y1, double w1, double h1,
 
 bool testAABBAABB(CoordVect &vec1, double side1, CoordVect &vec2, double side2)
 {
-	return AABB(vec1.x, vec1.y, side1, side1, vec2.x, vec2.y, side2, side2);
+	return testAABBAABB(vec1.x, vec1.y, side1, side1, vec2.x, vec2.y, side2, side2);
 }

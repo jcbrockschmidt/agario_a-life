@@ -22,11 +22,22 @@ class CoordVect
 class Blob
 {
 public:
+	/* Standard size of a blob */
+	static const double stdSize = 1.0;
+	/* How much larger one blob than another to consume it.
+	   Bigger blob must be *at least* this percent larger.
+	 */
+	static const double howLrg = 0.10;
+	/* How much one blob must cover another to consume it.
+	   Bigger blob must cover *at least* this percent of a smaller blob.
+	 */
+	static const double howCover = 0.50;
+
 	CoordVect pos;
 	CoordVect vel;
 	double size;
 
-	Blob(double size_new = 1, double x_new = 0, double y_new = 0);
+	Blob(double size_new = stdSize, double x_new = 0.0, double y_new = 0.0);
 	void setSize(double size_set);
 	void addSize(double size_add);
 	void setPos(double x_new, double y_new);

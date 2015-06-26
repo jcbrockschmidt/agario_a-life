@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
 	for (int i; i < 10000; i++) {
 		sim::update();
 	}
-	sim::cleanUp();
 
 	return 0;
 }
