@@ -23,15 +23,15 @@ class Blob
 {
 public:
 	/* Standard size of a blob */
-	static const double stdSize = 1.0;
+	static constexpr double stdSize = 1.0;
 	/* How much larger one blob than another to consume it.
 	   Bigger blob must be *at least* this percent larger.
 	 */
-	static const double howLrg = 0.10;
+	static constexpr double howLrg = 0.10;
 	/* How much one blob must cover another to consume it.
 	   Bigger blob must cover *at least* this percent of a smaller blob.
 	 */
-	static const double howCover = 0.50;
+	static constexpr double howCover = 0.50;
 
 	CoordVect pos;
 	CoordVect vel;
