@@ -27,12 +27,13 @@ WARNFLAGS   += -Wwrite-strings -Wdisabled-optimization -Wpointer-arith
 WARNFLAGS   += -Werror
 CFLAGS      := $(INCLUDES) $(BASEFLAGS)
 CFLAGS      += -std=c++11
+LDFLAGS     := -lSDL2
 
 # build rules
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LDFLAGS)
 
 warn: CFLAGS += $(WARNFLAGS)
 warn: $(NAME)
