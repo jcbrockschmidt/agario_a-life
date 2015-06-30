@@ -8,9 +8,6 @@ namespace visuals
 {
 	extern SDL_Window *win;
 	extern SDL_Renderer *ren;
-	extern std::string imgPath;
-	extern SDL_Surface *bmp;
-	extern SDL_Texture *tex;
 
 	int init(void);
 	void quit(void);
