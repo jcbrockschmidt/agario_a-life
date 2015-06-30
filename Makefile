@@ -42,4 +42,4 @@ debug: CFLAGS += $(WARNFLAGS) -g
 debug: $(NAME)
 
 clean:
-	$(RM) -f $(OBJS) $(NAME)
+	$(RM) -f $(NAME)
