@@ -6,7 +6,7 @@
 
 namespace sim
 {
-	const int initPop = 1;
+	const int initPop = 100;
 	const CoordVect bounds(1000.0, 1000.0);
         extern std::vector<Blob> pop;
 	extern double friction;
