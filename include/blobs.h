@@ -29,7 +29,7 @@ class Blob
 {
 public:
 	/* Standard size of a blob */
-	static constexpr double stdSize = 1.0;
+	static constexpr double stdSize = 16.0;
 	/* How much larger one blob than another to consume it.
 	   Bigger blob must be *at least* this percent larger.
 	 */
