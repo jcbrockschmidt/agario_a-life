@@ -9,7 +9,6 @@ SOURCES := $(wildcard src/*.cpp)
 
 # object files
 OBJS := $(SOURCES)
-#OBJS := $(patsubst %.cpp,%.o,$(SOURCES))
 
 # Build flags
 INCLUDES    := -Iinclude
@@ -42,4 +41,4 @@ debug: CFLAGS += $(WARNFLAGS) -g
 debug: $(NAME)
 
 clean:
-	$(RM) -f $(NAME)
+	$(RM) $(NAME)
