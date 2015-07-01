@@ -56,6 +56,38 @@ void CoordVect::sub(CoordVect &sub_vect)
 	CoordVect::sub(sub_vect.x, sub_vect.y);
 }
 
+void CoordVect::mul(double x_mul, double y_mul)
+{
+	x *= x_mul;
+	y *= y_mul;
+}
+
+void CoordVect::mul(double xy_mul)
+{
+	CoordVect::mul(xy_mul, xy_mul);
+}
+
+void CoordVect::mul(CoordVect &mul_vect)
+{
+	CoordVect::mul(mul_vect.x, mul_vect.y);
+}
+
+void CoordVect::div(double x_div, double y_div)
+{
+	x /= x_div;
+	y /= y_div;
+}
+
+void CoordVect::div(double xy_div)
+{
+	CoordVect::div(xy_div, xy_div);
+}
+
+void CoordVect::div(CoordVect &div_vect)
+{
+	CoordVect::div(div_vect.x, div_vect.y);
+}
+
 double CoordVect::rads(void)
 {
 	if (x == 0.0) {

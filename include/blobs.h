@@ -16,6 +16,12 @@ class CoordVect
 	void add(CoordVect &add_vect);
 	void sub(double x_sub, double y_sub);
 	void sub(CoordVect &sub_vect);
+	void mul(double x_mul, double y_mul);
+	void mul(double xy_mul);
+	void mul(CoordVect &mul_vect);
+	void div(double x_div, double y_div);
+	void div(double xy_div);
+	void div(CoordVect &div_vect);
 	double rads(void);
 };
 
