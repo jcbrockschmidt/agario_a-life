@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 	srand(time(NULL));
 
 	visuals::init();
+	visuals::draw();
 
 	sim::init();
 	for (int i; i < 10000; i++) {
