@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include "simulation.h"
 #include "visuals.h"
@@ -8,6 +9,7 @@ using std::endl;
 namespace visuals
 {
 	SDL_Window *win = NULL;
+	int win_w, win_h;
 	SDL_Renderer *ren = NULL;
 	SDL_Texture *bgTex = NULL;
 	SDL_Rect bgRect;
@@ -39,22 +41,10 @@ namespace visuals
 			return 1;
 		}
 
-		int win_w, win_h;
 		SDL_GetWindowSize(win, &win_w, &win_h);
 
 		bgRect = {0, 0, win_w, win_h};
-		Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-		rmask = 0xff000000;
-		gmask = 0x00ff0000;
-		bmask = 0x0000ff00;
-		amask = 0x000000ff;
-#else
-		rmask = 0x000000ff;
-		gmask = 0x0000ff00;
-		bmask = 0x00ff0000;
-		amask = 0xff000000;
-#endif
+
 		SDL_Surface *bgSurf =
 			SDL_CreateRGBSurface(0, win_w, win_h, 32,
 			                     rmask, gmask, bmask, amask );
@@ -77,11 +67,6 @@ namespace visuals
 			quit();
 			return 1;
 		}
-		/*
-		bgTex = SDL_CreateTexture(ren, format,
-					  SDL_TEXTUREACCESS_TARGET,
-					  win_w, win_h );
-		*/
 		bgTex = SDL_CreateTextureFromSurface(ren, bgSurf);
 		SDL_FreeSurface(bgSurf);
 		if (bgTex == NULL) {
@@ -101,7 +86,7 @@ namespace visuals
 		if (bgTex != NULL) SDL_DestroyTexture(bgTex);
 		if (ren != NULL) SDL_DestroyRenderer(ren);
 		if (win != NULL) SDL_DestroyWindow(win);
-		SDL_Quit();
+	        SDL_Quit();
 	}
 
 	void draw(void)
@@ -112,8 +97,54 @@ namespace visuals
 		SDL_RenderCopy(ren, bgTex, NULL, &bgRect);
 
 		/* Draw blobs */
+		SDL_Surface *blobSurf =
+			SDL_CreateRGBSurface(0, win_w, win_h, 32,
+					     rmask, gmask, bmask, amask );
+		if (blobSurf == NULL) {
+			cout << "SDL_CreateRGBSurface Error: " <<
+				SDL_GetError() << endl;
+		} else {
+			/* Draw each blob to the surface individually */
+			SDL_Rect bRect;
+			for (std::vector<Blob>::iterator it = sim::pop.begin();
+			     it != sim::pop.end(); ++it) {
+				bRect.x = (int)(it->pos.x * transMult.x);
+				bRect.y = (int)(it->pos.y * transMult.y);
+				bRect.w = std::max(1, (int)(it->size*transMult.x));
+				bRect.h = std::max(1, (int)(it->size*transMult.y));
+				SDL_FillRect(blobSurf, &bRect, 0xff000000);
+			}
+			SDL_Texture *blobTex =
+				SDL_CreateTextureFromSurface(ren, blobSurf);
+			SDL_FreeSurface(blobSurf);
+			if (blobTex == NULL) {
+				cout << "SDL_CreateTextureFromSurface Error: " <<
+					SDL_GetError() << endl;
+			} else {
+				SDL_RenderCopy(ren, blobTex, NULL, &bgRect);
+				SDL_DestroyTexture(blobTex);
+			}
+		}
 
 		/* Update screen */
 		SDL_RenderPresent(ren);
 	}
+}
+
+/* This is here because it messes up Emacs's
+   (my text editor) auto-indentation feature,
+   which is extremely annoying.
+*/
+namespace visuals {
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	Uint32 rmask = 0xff000000;
+	Uint32 gmask = 0x00ff0000;
+	Uint32 bmask = 0x0000ff00;
+	Uint32 amask = 0x000000ff;
+#else
+	Uint32 rmask = 0x000000ff;
+	Uint32 gmask = 0x0000ff00;
+	Uint32 bmask = 0x00ff0000;
+	Uint32 amask = 0xff000000;
+#endif
 }
