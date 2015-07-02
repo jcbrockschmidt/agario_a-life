@@ -12,8 +12,13 @@ namespace visuals
 	extern SDL_Renderer *ren;
 	extern SDL_Texture *bgTex;
 	extern SDL_Rect bgRect;
-	extern CoordVect transMult;
+	extern SDL_Rect blobRect;
+	extern double transMult;
 	extern Uint32 rmask, gmask, bmask, amask;
+
+	namespace colors {
+		extern Uint32 black;
+	}
 
 	int init(void);
 	void quit(void);

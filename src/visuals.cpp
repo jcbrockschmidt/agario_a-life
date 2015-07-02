@@ -13,7 +13,8 @@ namespace visuals
 	SDL_Renderer *ren = NULL;
 	SDL_Texture *bgTex = NULL;
 	SDL_Rect bgRect;
-	CoordVect transMult = CoordVect();
+	SDL_Rect blobRect;
+	double transMult;
 
 	int init(void)
 	{
@@ -42,8 +43,13 @@ namespace visuals
 		}
 
 		SDL_GetWindowSize(win, &win_w, &win_h);
-
 		bgRect = {0, 0, win_w, win_h};
+		transMult = std::min((double)win_w/sim::bounds.x,
+				     (double)win_h/sim::bounds.y );
+		blobRect.w = (int)(sim::bounds.x*transMult);
+		blobRect.h = (int)(sim::bounds.y*transMult);
+		blobRect.x = (win_w-blobRect.w) / 2;
+		blobRect.y = (win_h-blobRect.h) / 2;
 
 		SDL_Surface *bgSurf =
 			SDL_CreateRGBSurface(0, win_w, win_h, 32,
@@ -60,6 +66,7 @@ namespace visuals
 			quit();
 			return 1;
 		}
+
 		Uint32 format = SDL_GetWindowPixelFormat(win);
 		if (format == SDL_PIXELFORMAT_UNKNOWN) {
 			cout << "SDL_GetWindowPixelFormat Error: " <<
@@ -75,9 +82,6 @@ namespace visuals
 		        quit();
 			return 1;
 		}
-
-		transMult.set((double)win_w, (double)win_h);
-		transMult.div(sim::bounds.x, sim::bounds.y);
 	}
 
 	void quit(void)
@@ -96,9 +100,31 @@ namespace visuals
 		/* Draw background */
 		SDL_RenderCopy(ren, bgTex, NULL, &bgRect);
 
+		/* Draw borders */
+		SDL_RenderDrawLine(ren,
+				   blobRect.x,
+				   blobRect.y,
+				   blobRect.x,
+				   blobRect.y+blobRect.h );
+		SDL_RenderDrawLine(ren,
+				   blobRect.x+blobRect.w,
+				   blobRect.y,
+				   blobRect.x+blobRect.w,
+				   blobRect.y+blobRect.h);
+		SDL_RenderDrawLine(ren,
+				   blobRect.x,
+				   blobRect.y,
+				   blobRect.x+blobRect.w,
+				   blobRect.y );
+		SDL_RenderDrawLine(ren,
+				   blobRect.x,
+				   blobRect.y+blobRect.h,
+				   blobRect.x+blobRect.w,
+				   blobRect.y+blobRect.h );
+
 		/* Draw blobs */
 		SDL_Surface *blobSurf =
-			SDL_CreateRGBSurface(0, win_w, win_h, 32,
+			SDL_CreateRGBSurface(0, blobRect.w, blobRect.h, 32,
 					     rmask, gmask, bmask, amask );
 		if (blobSurf == NULL) {
 			cout << "SDL_CreateRGBSurface Error: " <<
@@ -108,11 +134,11 @@ namespace visuals
 			SDL_Rect bRect;
 			for (std::vector<Blob>::iterator it = sim::pop.begin();
 			     it != sim::pop.end(); ++it) {
-				bRect.x = (int)(it->pos.x * transMult.x);
-				bRect.y = (int)(it->pos.y * transMult.y);
-				bRect.w = std::max(1, (int)(it->size*transMult.x));
-				bRect.h = std::max(1, (int)(it->size*transMult.y));
-				SDL_FillRect(blobSurf, &bRect, 0xff000000);
+				bRect.x = (int)(it->pos.x * transMult);
+				bRect.y = (int)(it->pos.y * transMult);
+				bRect.w = std::max(1, (int)(it->size*transMult));
+				bRect.h = std::max(1, (int)(it->size*transMult));
+				SDL_FillRect(blobSurf, &bRect, colors::black);
 			}
 			SDL_Texture *blobTex =
 				SDL_CreateTextureFromSurface(ren, blobSurf);
@@ -121,7 +147,7 @@ namespace visuals
 				cout << "SDL_CreateTextureFromSurface Error: " <<
 					SDL_GetError() << endl;
 			} else {
-				SDL_RenderCopy(ren, blobTex, NULL, &bgRect);
+				SDL_RenderCopy(ren, blobTex, NULL, &blobRect);
 				SDL_DestroyTexture(blobTex);
 			}
 		}
@@ -135,16 +161,24 @@ namespace visuals
    (my text editor) auto-indentation feature,
    which is extremely annoying.
 */
-namespace visuals {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+namespace visuals {
 	Uint32 rmask = 0xff000000;
 	Uint32 gmask = 0x00ff0000;
 	Uint32 bmask = 0x0000ff00;
 	Uint32 amask = 0x000000ff;
+	namespace colors {
+		Uint32 black = 0x000000ff;
+	}
+}
 #else
+namespace visuals {
 	Uint32 rmask = 0x000000ff;
 	Uint32 gmask = 0x0000ff00;
 	Uint32 bmask = 0x00ff0000;
 	Uint32 amask = 0xff000000;
-#endif
+	namespace colors {
+		Uint32 black = 0xff000000;
+	}
 }
+#endif

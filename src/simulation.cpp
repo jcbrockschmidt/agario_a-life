@@ -8,11 +8,12 @@
 #include "simulation.h"
 
 using std::cout;
+using std::endl;
 
 namespace sim
 {
 	std::vector<Blob> pop;
-	double friction = 10.0;
+	double friction = 0.5;
 
 	void init(void)
 	{
@@ -35,7 +36,7 @@ namespace sim
 			if (b < 0 || b >= pop.size())
 				throw std::out_of_range("sim::kill");
 		} catch(const std::out_of_range &e) {
-			cout << "Out of Range error: " << e.what() << '\n';
+			cout << "Out of Range error: " << e.what() << endl;
 			return false;
 		}
 		pop.erase(pop.begin()+b);
@@ -101,6 +102,7 @@ namespace sim
 				if (w*h >= needArea) {
 					/* Consume smaller blob */
 					kill(small_i);
+					/* Shift iterator values if needed */
 					if (small_i == b1) {
 						b1--;
 						/* b1 will always be smaller
