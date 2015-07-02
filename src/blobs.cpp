@@ -185,19 +185,19 @@ void Blob::update(void)
 
 	/* Bounds correction */
 	if (newPos.x < 0.0) {
-		pos.set_x(0.0);
+		newPos.set_x(0.0);
 		if (vel.x < 0.0) vel.set_x(0.0);
 		vel.set_x(0.0);
 	} else if (newPos.x + size > sim::bounds.x) {
-		pos.set_x(sim::bounds.x - size);
+		newPos.set_x(sim::bounds.x - size);
 		if (vel.x > 0.0) vel.set_x(0.0);
 	}
 	if (newPos.y < 0.0) {
-		pos.set_y(0.0);
+		newPos.set_y(0.0);
 		if (vel.y < 0.0) vel.set_y(0.0);
 		vel.set_y(0.0);
 	} else if (newPos.y + size > sim::bounds.y) {
-		pos.set_y(sim::bounds.y - size);
+		newPos.set_y(sim::bounds.y - size);
 		if (vel.y > 0.0) vel.set_y(0.0);
 	}
 
