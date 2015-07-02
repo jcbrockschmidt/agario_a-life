@@ -44,8 +44,8 @@ namespace visuals
 
 		SDL_GetWindowSize(win, &win_w, &win_h);
 		bgRect = {0, 0, win_w, win_h};
-		transMult = std::min((double)win_w/sim::bounds.x,
-				     (double)win_h/sim::bounds.y );
+		transMult = std::min((double)(win_w-padding*2)/sim::bounds.x,
+				     (double)(win_h-padding*2)/sim::bounds.y );
 		blobRect.w = (int)(sim::bounds.x*transMult);
 		blobRect.h = (int)(sim::bounds.y*transMult);
 		blobRect.x = (win_w-blobRect.w) / 2;

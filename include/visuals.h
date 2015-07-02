@@ -13,6 +13,7 @@ namespace visuals
 	extern SDL_Texture *bgTex;
 	extern SDL_Rect bgRect;
 	extern SDL_Rect blobRect;
+	const int padding = 10;
 	extern double transMult;
 	extern Uint32 rmask, gmask, bmask, amask;
 
