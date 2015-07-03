@@ -122,7 +122,7 @@ namespace visuals
 				   blobRect.x+blobRect.w,
 				   blobRect.y+blobRect.h );
 
-		/* Draw blobs */
+		/* Draw blobs and food */
 		SDL_Surface *blobSurf =
 			SDL_CreateRGBSurface(0, blobRect.w, blobRect.h, 32,
 					     rmask, gmask, bmask, amask );
@@ -130,15 +130,24 @@ namespace visuals
 			cout << "SDL_CreateRGBSurface Error: " <<
 				SDL_GetError() << endl;
 		} else {
+			SDL_Rect curRect;
+			/* Draw each food pellet to the surface individually */
+			for (std::vector<Food>::iterator it = sim::food.begin();
+			     it != sim::food.end(); ++it) {
+				curRect.x = (int)(it->pos.x * transMult);
+				curRect.y = (int)(it->pos.y * transMult);
+				curRect.w = std::max(1, (int)(it->size*transMult));
+				curRect.h = std::max(1, (int)(it->size*transMult));
+				SDL_FillRect(blobSurf, &curRect, colors::red);
+			}
 			/* Draw each blob to the surface individually */
-			SDL_Rect bRect;
 			for (std::vector<Blob>::iterator it = sim::pop.begin();
 			     it != sim::pop.end(); ++it) {
-				bRect.x = (int)(it->pos.x * transMult);
-				bRect.y = (int)(it->pos.y * transMult);
-				bRect.w = std::max(1, (int)(it->size*transMult));
-				bRect.h = std::max(1, (int)(it->size*transMult));
-				SDL_FillRect(blobSurf, &bRect, colors::black);
+				curRect.x = (int)(it->pos.x * transMult);
+				curRect.y = (int)(it->pos.y * transMult);
+				curRect.w = std::max(1, (int)(it->size*transMult));
+				curRect.h = std::max(1, (int)(it->size*transMult));
+				SDL_FillRect(blobSurf, &curRect, colors::blue);
 			}
 			SDL_Texture *blobTex =
 				SDL_CreateTextureFromSurface(ren, blobSurf);
@@ -169,6 +178,8 @@ namespace visuals {
 	Uint32 amask = 0x000000ff;
 	namespace colors {
 		Uint32 black = 0x000000ff;
+		Uint32 red = 0xff0000ff;
+		Uint32 blue = 0x0000ffff;
 	}
 }
 #else
@@ -179,6 +190,8 @@ namespace visuals {
 	Uint32 amask = 0xff000000;
 	namespace colors {
 		Uint32 black = 0xff000000;
+		Uint32 red = 0xff0000ff;
+		Uint32 blue = 0xffff0000;
 	}
 }
 #endif

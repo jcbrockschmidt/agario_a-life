@@ -13,14 +13,25 @@ using std::endl;
 namespace sim
 {
 	std::vector<Blob> pop;
+	std::vector<Food> food;
 	double friction = 0.5;
 
 	void init(void)
 	{
-		for (int b; b < initPop; b++) {
+		for (int b; b < initPopCnt; b++) {
 			double x = getRandRange(0.0, bounds.x-Blob::stdSize);
 			double y = getRandRange(0.0, bounds.y-Blob::stdSize);
 			pop.push_back(Blob(Blob::stdSize, x, y));
+			//DEBUG
+			pop[b].vel.set(-20.0, -20.0);
+			if (b%2 == 0)
+				pop[b].size = 32.0;
+			//EOF DEBUG
+		}
+		for (int f; f < initFoodCnt; f++) {
+			double x = getRandRange(0.0, bounds.x-Food::size);
+			double y = getRandRange(0.0, bounds.y-Food::size);
+			food.push_back(Food(x, y));
 		}
 	}
 
@@ -43,17 +54,66 @@ namespace sim
 		return true;
 	}
 
+	bool eat(unsigned int f)
+	{
+		try {
+			if (f < 0 || f >= food.size())
+				throw std::out_of_range("sim::kill");
+		} catch(const std::out_of_range &e) {
+			cout << "Out of Range error: " << e.what() << endl;
+			return false;
+		}
+		food.erase(food.begin()+f);
+		return true;
+	}
+
+	bool doesCover(CoordVect &big_pos, double big_size,
+		       CoordVect &small_pos, double small_size)
+	{
+		/* Make sure bigger blob covers enough of the smaller blob */
+		double w, h;
+		if (small_pos.x < big_pos.x)
+			w = small_size-(big_pos.x-small_pos.x);
+		else if (small_pos.x + small_size <= big_pos.x + big_size)
+			w = small_size;
+		else
+			w = (big_pos.x+big_size)-small_pos.x;
+		if (small_pos.y < big_pos.y)
+			h = small_size-(big_pos.y-small_pos.y);
+		else if (small_pos.y + small_size <= big_pos.y + big_size)
+			h = small_size;
+		else
+			h = (big_pos.y+big_size)-small_pos.y;
+
+		/* Covered area greater than or equal to required percent of
+		   smaller blob's area that must be covered
+		*/
+		double needArea = small_size*small_size * Blob::howCover;
+		return (w*h >= needArea);
+	}
+
 	void update(void)
 	{
 		/* Update all blobs */
 		for (int b; b < pop.size(); b++)
 			pop[b].update();
 
-		/* Check for collisions */
+		/* Check for collisions between blobs and food */
+		for (int b = 0; b < pop.size(); b++) {
+			for (int f = 0; f < food.size(); f++) {
+				if (!testAABBAABB(pop[b].pos, pop[b].size,
+						  food[f].pos, food[f].size) )
+					continue;
+
+				if (sim::doesCover(pop[b].pos, pop[b].size,
+						   food[f].pos, food[f].size))
+					eat(f--);
+			}
+		}
+
+		/* Check for collisions between blobs */
 		for (int b1 = 0; b1 < pop.size()-1; b1++) {
 			for (int b2 = b1+1; b2 < pop.size(); b2++) {
-				if (b1 == b2)
-					continue;
 				if (!testAABBAABB(pop[b1].pos, pop[b1].size,
 						  pop[b2].pos, pop[b2].size) )
 					continue;
@@ -77,29 +137,8 @@ namespace sim
 				if (small.size * Blob::howLrg > big.size)
 					continue;
 
-				/* Make sure bigger blob covers enough
-				   of the smaller blob */
-				double w, h;
-				if (small.pos.x < big.pos.x)
-					w = small.size-(big.pos.x-small.pos.x);
-				else if (small.pos.x + small.size <= big.pos.x + big.size)
-					w = small.size;
-				else
-					w = (big.pos.x+big.size)-small.pos.x;
-				if (small.pos.y < big.pos.y)
-					h = small.size-(big.pos.y-small.pos.y);
-				else if (small.pos.y + small.size <= big.pos.y + big.size)
-					h = small.size;
-				else
-					h = (big.pos.y+big.size)-small.pos.y;
-
-				/* Covered area greater than or equal to
-				   required percent of smaller blob's area
-				   that must be covered
-				 */
-				double needArea = small.size*small.size *
-					Blob::howCover;
-				if (w*h >= needArea) {
+				if (sim::doesCover(big.pos, big.size,
+						   small.pos, small.size)) {
 					/* Consume smaller blob */
 					kill(small_i);
 					/* Shift iterator values if needed */

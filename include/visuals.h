@@ -18,7 +18,7 @@ namespace visuals
 	extern Uint32 rmask, gmask, bmask, amask;
 
 	namespace colors {
-		extern Uint32 black;
+		extern Uint32 black, red, blue;
 	}
 
 	int init(void);

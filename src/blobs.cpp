@@ -205,6 +205,11 @@ void Blob::update(void)
 	pos.set(newPos);
 }
 
+Food::Food(double x_new, double y_new)
+{
+	pos = CoordVect(x_new, y_new);
+}
+
 bool testAABBAABB(double x1, double y1, double w1, double h1,
 	  double x2, double y2, double w2, double h2)
 {

@@ -57,9 +57,12 @@ public:
 	void update(void);
 };
 
-struct Food {
+class Food {
+ public:
+	static constexpr double size = 5;
 	CoordVect pos;
-	double size;
+
+	Food(double x_new = 0.0, double y_new = 0.0);
 };
 
 /**
