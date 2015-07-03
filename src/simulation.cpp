@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <math.h>
 #include <stdlib.h>
 #include "blobs.h"
 #include "general.h"
@@ -22,11 +23,6 @@ namespace sim
 			double x = getRandRange(0.0, bounds.x-Blob::stdSize);
 			double y = getRandRange(0.0, bounds.y-Blob::stdSize);
 			pop.push_back(Blob(Blob::stdSize, x, y));
-			//DEBUG
-			pop[b].vel.set(-20.0, -20.0);
-			if (b%2 == 0)
-				pop[b].size = 32.0;
-			//EOF DEBUG
 		}
 		for (int f; f < initFoodCnt; f++) {
 			double x = getRandRange(0.0, bounds.x-Food::size);
@@ -106,8 +102,13 @@ namespace sim
 					continue;
 
 				if (sim::doesCover(pop[b].pos, pop[b].size,
-						   food[f].pos, food[f].size))
+						   food[f].pos, food[f].size)) {
+					pop[b].size +=
+						sqrt(pop[b].size*pop[b].size +
+						     food[f].size*food[f].size ) -
+						pop[b].size;
 					eat(f--);
+				}
 			}
 		}
 
@@ -140,6 +141,10 @@ namespace sim
 				if (sim::doesCover(big.pos, big.size,
 						   small.pos, small.size)) {
 					/* Consume smaller blob */
+					big.size +=
+						sqrt(big.size*big.size +
+						     small.size*small.size ) -
+						big.size;
 					kill(small_i);
 					/* Shift iterator values if needed */
 					if (small_i == b1) {
