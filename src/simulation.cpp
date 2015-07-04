@@ -54,7 +54,7 @@ namespace sim
 	{
 		try {
 			if (f < 0 || f >= food.size())
-				throw std::out_of_range("sim::kill");
+				throw std::out_of_range("sim::eat");
 		} catch(const std::out_of_range &e) {
 			cout << "Out of Range error: " << e.what() << endl;
 			return false;
