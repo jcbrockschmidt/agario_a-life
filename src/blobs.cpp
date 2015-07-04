@@ -1,9 +1,9 @@
 /* DOIT:
- * - Enable CoordVect to store ints as well as doubles. <- Needed?
+ * - Change size before (not after) boundary correction.
  */
 
 #define _USE_MATH_DEFINES
-#include "math.h"
+#include <math.h>
 #include "blobs.h"
 #include "general.h"
 #include "simulation.h"
@@ -114,17 +114,18 @@ double CoordVect::rads(void)
 Blob::Blob(double size_new, double x_new, double y_new)
 : pos(x_new, y_new), vel()
 {
-	size = size_new;
+	Blob::setSize(size_new);
 }
 
 void Blob::setSize(double size_set)
 {
 	size = size_set;
+	maxVel = 25*pow(0.9830, size) + 1;
 }
 
 void Blob::addSize(double size_add)
 {
-	size += size_add;
+	Blob::setSize(size + size_add);
 }
 
 void Blob::setPos(double x_new, double y_new)
@@ -178,9 +179,13 @@ void Blob::update(void)
 		newVel.y = max(0.0, newVel.y);
 	else if (vel.y < 0.0)
 		newVel.y = min(0.0, newVel.y);
-	vel.set(newVel);
+
+	/* Make sure velocity's magnitude is not too great */
+	if (newVel.x*newVel.x + newVel.y*newVel.y > maxVel*maxVel)
+		newVel.set(maxVel*cos(rads), maxVel*sin(rads));
 
 	/* Apply velocity */
+	vel.set(newVel);
 	newPos.add(vel);
 
 	/* Bounds correction */

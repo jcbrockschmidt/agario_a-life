@@ -103,10 +103,10 @@ namespace sim
 
 				if (sim::doesCover(pop[b].pos, pop[b].size,
 						   food[f].pos, food[f].size)) {
-					pop[b].size +=
+					pop[b].addSize(
 						sqrt(pop[b].size*pop[b].size +
 						     food[f].size*food[f].size ) -
-						pop[b].size;
+						pop[b].size );
 					eat(f--);
 				}
 			}
@@ -141,10 +141,10 @@ namespace sim
 				if (sim::doesCover(big.pos, big.size,
 						   small.pos, small.size)) {
 					/* Consume smaller blob */
-					big.size +=
+					big.addSize(
 						sqrt(big.size*big.size +
 						     small.size*small.size ) -
-						big.size;
+						big.size );
 					kill(small_i);
 					/* Shift iterator values if needed */
 					if (small_i == b1) {

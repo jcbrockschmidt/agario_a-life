@@ -42,6 +42,7 @@ public:
 	CoordVect pos;
 	CoordVect vel;
 	double size;
+	double maxVel;
 
 	Blob(double size_new = stdSize, double x_new = 0.0, double y_new = 0.0);
 	void setSize(double size_set);
