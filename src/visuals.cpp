@@ -102,25 +102,25 @@ namespace visuals
 
 		/* Draw borders */
 		SDL_RenderDrawLine(ren,
-				   blobRect.x,
-				   blobRect.y,
-				   blobRect.x,
-				   blobRect.y+blobRect.h );
+				   blobRect.x-1,
+				   blobRect.y-1,
+				   blobRect.x-1,
+				   blobRect.y+blobRect.h-1 );
 		SDL_RenderDrawLine(ren,
-				   blobRect.x+blobRect.w,
-				   blobRect.y,
-				   blobRect.x+blobRect.w,
-				   blobRect.y+blobRect.h);
+				   blobRect.x+blobRect.w-1,
+				   blobRect.y-1,
+				   blobRect.x+blobRect.w-1,
+				   blobRect.y+blobRect.h-1 );
 		SDL_RenderDrawLine(ren,
-				   blobRect.x,
-				   blobRect.y,
-				   blobRect.x+blobRect.w,
-				   blobRect.y );
+				   blobRect.x-1,
+				   blobRect.y-1,
+				   blobRect.x+blobRect.w-1,
+				   blobRect.y-1 );
 		SDL_RenderDrawLine(ren,
-				   blobRect.x,
-				   blobRect.y+blobRect.h,
-				   blobRect.x+blobRect.w,
-				   blobRect.y+blobRect.h );
+				   blobRect.x-1,
+				   blobRect.y+blobRect.h-1,
+				   blobRect.x+blobRect.w-1,
+				   blobRect.y+blobRect.h-1 );
 
 		/* Draw blobs and food */
 		SDL_Surface *blobSurf =
