@@ -107,6 +107,7 @@ namespace sim
 						sqrt(pop[b].size*pop[b].size +
 						     food[f].size*food[f].size ) -
 						pop[b].size );
+					pop[b].boundsCorrect();
 					eat(f--);
 				}
 			}
@@ -145,6 +146,7 @@ namespace sim
 						sqrt(big.size*big.size +
 						     small.size*small.size ) -
 						big.size );
+					big.boundsCorrect();
 					kill(small_i);
 					/* Shift iterator values if needed */
 					if (small_i == b1) {

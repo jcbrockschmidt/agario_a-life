@@ -55,6 +55,7 @@ public:
 	void setVel(CoordVect &set_vect);
 	void addVel(double x_add, double y_add);
 	void addVel(CoordVect &add_vect);
+	void boundsCorrect(void);
 	void update(void);
 };
 

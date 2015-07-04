@@ -1,7 +1,3 @@
-/* DOIT:
- * - Change size before (not after) boundary correction.
- */
-
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "blobs.h"
@@ -163,6 +159,26 @@ void Blob::addVel(CoordVect &add_vect)
 	vel.add(add_vect);
 }
 
+void Blob::boundsCorrect(void)
+{
+	if (pos.x < 0.0) {
+		pos.set_x(0.0);
+		if (vel.x < 0.0) vel.set_x(0.0);
+		vel.set_x(0.0);
+	} else if (pos.x + size > sim::bounds.x) {
+		pos.set_x(sim::bounds.x - size);
+		if (vel.x > 0.0) vel.set_x(0.0);
+	}
+	if (pos.y < 0.0) {
+		pos.set_y(0.0);
+		if (vel.y < 0.0) vel.set_y(0.0);
+		vel.set_y(0.0);
+	} else if (pos.y + size > sim::bounds.y) {
+		pos.set_y(sim::bounds.y - size);
+		if (vel.y > 0.0) vel.set_y(0.0);
+	}
+}
+
 void Blob::update(void)
 {
 	/* Apply friction */
@@ -189,6 +205,7 @@ void Blob::update(void)
 	newPos.add(vel);
 
 	/* Bounds correction */
+	/*
 	if (newPos.x < 0.0) {
 		newPos.set_x(0.0);
 		if (vel.x < 0.0) vel.set_x(0.0);
@@ -205,9 +222,11 @@ void Blob::update(void)
 		newPos.set_y(sim::bounds.y - size);
 		if (vel.y > 0.0) vel.set_y(0.0);
 	}
+	*/
 
 	/* Apply changes to position */
 	pos.set(newPos);
+	Blob::boundsCorrect();
 }
 
 Food::Food(double x_new, double y_new)
