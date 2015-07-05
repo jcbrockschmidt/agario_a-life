@@ -25,6 +25,20 @@ class CoordVect
 	double rads(void);
 };
 
+class Brain
+{
+ public:
+	static constexpr int inNum = 5;
+	static constexpr int outNum = 2;
+	static double defaultWeights[5][2];
+
+	double weights[inNum][outNum];
+	double outs[outNum];
+
+	Brain(double weights_init[inNum][outNum] = defaultWeights);
+	void feedforward(double ins[inNum]);
+};
+
 class Blob
 {
 public:
@@ -43,6 +57,7 @@ public:
 	CoordVect vel;
 	double size;
 	double maxVel;
+	Brain brain;
 
 	Blob(double size_new = stdSize, double x_new = 0.0, double y_new = 0.0);
 	void setSize(double size_set);

@@ -107,8 +107,30 @@ double CoordVect::rads(void)
 
 
 
+double Brain::defaultWeights[5][2] = {{0,0},{0,0},{0,0},{0,0},{0,0}};
+
+Brain::Brain(double weights_init[Brain::inNum][Brain::outNum])
+{
+	for (int i=0; i<inNum; i++)
+		for (int o=0; o<outNum; o++)
+			weights[i][o] = weights_init[i][o];
+	for (int o=0; o<outNum; o++)
+		outs[o] = 0.0;
+}
+
+void Brain::feedforward(double ins[Brain::inNum])
+{
+	for (int o=0; o<outNum; o++) {
+	        outs[o] = 0.0;
+		for (int i=0; i<inNum; i++)
+			outs[o] += ins[i]*weights[i][o];
+	}
+}
+
+
+
 Blob::Blob(double size_new, double x_new, double y_new)
-: pos(x_new, y_new), vel()
+	: pos(x_new, y_new), vel(), brain()
 {
 	Blob::setSize(size_new);
 }
