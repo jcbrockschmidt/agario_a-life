@@ -18,14 +18,14 @@ int main(int argc, char *argv[])
 	visuals::draw();
 	SDL_Event ev;
 	bool quit = false;
-	for (int i; i < 10000; i++) {
+	while (true) {
 		sim::update();
 		visuals::draw();
 		while (SDL_PollEvent(&ev)) {
 			if (ev.type == SDL_QUIT) quit = true;
 		}
 		if (quit) break;
-		SDL_Delay(100);
+		SDL_Delay(50);
 	}
 
 	visuals::quit();
