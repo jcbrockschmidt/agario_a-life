@@ -9,10 +9,10 @@ namespace sim
 	const int initPopCnt = 100;
 	const int initFoodCnt = 100;
 	const CoordVect bounds(1000.0, 1000.0);
+	const double friction = 0.5;
 	const double mutateProb = 0.75;
         extern std::vector<Blob> pop;
         extern std::vector<Food> food;
-	extern double friction;
 
 	/**
 	   Initializes the simulation. Should only be called once.

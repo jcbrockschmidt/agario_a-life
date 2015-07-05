@@ -1,5 +1,4 @@
 /* DOIT:
- * - Make friction a constant.
  * - Have blobs lose energy.
  * - Have blobs decrease in mass over time.
  */
@@ -21,7 +20,6 @@ namespace sim
 {
 	std::vector<Blob> pop;
 	std::vector<Food> food;
-	double friction = 0.5;
 
 	void init(void)
 	{
