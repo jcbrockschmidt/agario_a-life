@@ -74,7 +74,7 @@ namespace sim
 		double totalSize = 0.0;
 		for (std::vector<Blob>::iterator it = pop.begin();
 		     it != pop.end(); ++it)
-			totalSize += it->size;
+			totalSize += it->peakSize;
 		int oldPopSize = pop.size();
 		double needProb, curProb, x, y;
 		for (int i = initPopCnt-pop.size(); i > 0; --i) {
@@ -82,7 +82,7 @@ namespace sim
 			curProb = 0.0;
 			int b;
 			for (b = 0; b < oldPopSize-1; b++) {
-				curProb += pop[b].size;
+				curProb += pop[b].peakSize;
 				if (curProb > needProb) break;
 			}
 			x = getRandRange(0.0, bounds.x-Blob::stdSize);

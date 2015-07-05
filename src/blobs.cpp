@@ -146,12 +146,14 @@ Blob::Blob(double size_new, double x_new, double y_new,
 	   double weights[Brain::inNum][Brain::outNum])
 	: pos(x_new, y_new), vel(), brain(weights)
 {
+	peakSize = 0;
 	Blob::setSize(size_new);
 }
 
 void Blob::setSize(double size_set)
 {
 	size = size_set;
+	if (size_set > peakSize) peakSize = size_set;
 	maxVel = 25*pow(0.9830, size) + 1;
 }
 

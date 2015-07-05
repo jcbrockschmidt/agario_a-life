@@ -73,6 +73,8 @@ public:
 	double size;
 	double maxVel;
 	Brain brain;
+	/* The greatest size a blob has reached */
+	double peakSize;
 
 	Blob(double size_new = stdSize, double x_new = 0.0, double y_new = 0.0,
 	     double weights[Brain::inNum][Brain::outNum] = nullptr);
