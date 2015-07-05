@@ -9,7 +9,6 @@ using std::endl;
 namespace visuals
 {
 	SDL_Window *win = NULL;
-	int win_w, win_h;
 	SDL_Renderer *ren = NULL;
 	SDL_Texture *bgTex = NULL;
 	SDL_Rect bgRect;
@@ -23,7 +22,7 @@ namespace visuals
 			return 1;
 		}
 
-		win = SDL_CreateWindow("Test", 100, 100, 640, 480,
+		win = SDL_CreateWindow("Test", 100, 100, win_w, win_h,
 				       SDL_WINDOW_SHOWN );
 		if (win == nullptr) {
 			cout << "SDL_CreateWindow Error: " <<
@@ -42,7 +41,6 @@ namespace visuals
 			return 1;
 		}
 
-		SDL_GetWindowSize(win, &win_w, &win_h);
 		bgRect = {0, 0, win_w, win_h};
 		transMult = std::min((double)(win_w-padding*2)/sim::bounds.x,
 				     (double)(win_h-padding*2)/sim::bounds.y );

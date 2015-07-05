@@ -7,13 +7,14 @@
 
 namespace visuals
 {
+	const int win_w = 1024;
+	const int win_h = 640;
+	const int padding = 10;
 	extern SDL_Window *win;
-	extern int win_w, win_h;
 	extern SDL_Renderer *ren;
 	extern SDL_Texture *bgTex;
 	extern SDL_Rect bgRect;
 	extern SDL_Rect blobRect;
-	const int padding = 10;
 	extern double transMult;
 	extern Uint32 rmask, gmask, bmask, amask;
 
