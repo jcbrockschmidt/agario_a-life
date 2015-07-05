@@ -57,8 +57,16 @@ public:
 	   A blob's FOV is a square whose sides are size*(1+2*seeMult) each.
 	 */
 	static constexpr double seeMult = 3.0;
-
+	/* How fast a blob can accelerate in any direction */
 	static constexpr double accel = 5.0;
+	/* What percentage of a blob's size is lost each round.
+	   This decay is applied to a blob's size, not its mass.
+	   Thus, the amount of mass a blob loses each iteration
+	   will increase exponentially as it grows.
+	 */
+	static constexpr double decayRate = 0.05;
+	/* The minimum size of a blob before it dies off. */
+	static constexpr double minSize = 5;
 
 	CoordVect pos;
 	CoordVect vel;

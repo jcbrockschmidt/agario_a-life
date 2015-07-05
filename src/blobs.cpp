@@ -128,8 +128,7 @@ Brain::Brain(double weights_init[Brain::inNum][Brain::outNum])
 			for (int o=0; o<outNum; o++)
 				weights[i][o] = weights_init[i][o];
 	}
-	for (int o=0; o<outNum; o++)
-		outs[o] = 0.0;
+	for (int o=0; o<outNum; o++) outs[o] = 0.0;
 }
 
 void Brain::feedforward(double ins[Brain::inNum])

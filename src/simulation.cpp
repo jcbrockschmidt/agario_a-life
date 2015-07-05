@@ -1,6 +1,7 @@
 /* DOIT:
  * - Have blobs lose energy.
  * - Have blobs decrease in mass over time.
+ * - Add boundary perception.
  */
  
 #include <iostream>
@@ -128,8 +129,15 @@ namespace sim
 	void update(void)
 	{
 		/* Update all blobs */
-		for (int b; b < pop.size(); b++)
-			pop[b].update();
+		for (int b; b < pop.size(); b++) {
+			/* Decay blob */
+			pop[b].size -= pop[b].size*Blob::decayRate;
+			if (pop[b].size < Blob::minSize)
+				kill(b--);
+			else
+				/* Update blob if it is still alive */
+				pop[b].update();
+		}
 
 		/* Check for collisions between blobs and food */
 		for (int b = 0; b < pop.size(); b++) {
