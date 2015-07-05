@@ -11,7 +11,9 @@ class CoordVect
 	void set(double x_new, double y_new);
 	void set(CoordVect &set_vect);
 	void set_x(double x_new);
+	void set_x(CoordVect &set_vect);
 	void set_y(double y_new);
+	void set_y(CoordVect &set_vect);
 	void add(double x_add, double y_add);
 	void add(CoordVect &add_vect);
 	void sub(double x_sub, double y_sub);
@@ -28,14 +30,13 @@ class CoordVect
 class Brain
 {
  public:
-	static constexpr int inNum = 5;
+	static constexpr int inNum = 19;
 	static constexpr int outNum = 2;
-	static double defaultWeights[5][2];
 
 	double weights[inNum][outNum];
 	double outs[outNum];
 
-	Brain(double weights_init[inNum][outNum] = defaultWeights);
+	Brain(double weights_init[inNum][outNum] = nullptr);
 	void feedforward(double ins[inNum]);
 };
 
@@ -52,6 +53,12 @@ public:
 	   Bigger blob must cover *at least* this percent of a smaller blob.
 	 */
 	static constexpr double howCover = 0.50;
+	/* How far a blob can see (as a multiple of its size).
+	   A blob's FOV is a square whose sides are size*(1+2*seeMult) each.
+	 */
+	static constexpr double seeMult = 3.0;
+
+	static constexpr double accel = 5.0;
 
 	CoordVect pos;
 	CoordVect vel;
@@ -71,6 +78,8 @@ public:
 	void addVel(double x_add, double y_add);
 	void addVel(CoordVect &add_vect);
 	void boundsCorrect(void);
+	void perceive(void);
+	void act(void);
 	void update(void);
 };
 
@@ -98,5 +107,7 @@ Checks for collision between two rectangles.
 bool testAABBAABB(double x1, double y1, double w1, double h1,
 	  double x2, double y2, double w2, double h2);
 bool testAABBAABB(CoordVect &vec1, double side1, CoordVect &vec2, double side2);
+
+double sigmoid(double x);
 
 #endif

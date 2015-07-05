@@ -25,9 +25,19 @@ void CoordVect::set_x(double x_new)
 	x = x_new;
 }
 
+void CoordVect::set_x(CoordVect &set_vect)
+{
+	CoordVect::set_x(set_vect.x);
+}
+
 void CoordVect::set_y(double y_new)
 {
 	y = y_new;
+}
+
+void CoordVect::set_y(CoordVect &set_vect)
+{
+	CoordVect::set_y(set_vect.y);
 }
 
 void CoordVect::add(double x_add, double y_add)
@@ -107,13 +117,17 @@ double CoordVect::rads(void)
 
 
 
-double Brain::defaultWeights[5][2] = {{0,0},{0,0},{0,0},{0,0},{0,0}};
-
 Brain::Brain(double weights_init[Brain::inNum][Brain::outNum])
 {
-	for (int i=0; i<inNum; i++)
-		for (int o=0; o<outNum; o++)
-			weights[i][o] = weights_init[i][o];
+	if (weights_init == nullptr) {
+		for (int i=0; i<inNum; i++)
+			for (int o=0; o<outNum; o++)
+				weights[i][o] = getRandRange(-5.0, 5.0);
+	} else {
+		for (int i=0; i<inNum; i++)
+			for (int o=0; o<outNum; o++)
+				weights[i][o] = weights_init[i][o];
+	}
 	for (int o=0; o<outNum; o++)
 		outs[o] = 0.0;
 }
@@ -201,8 +215,99 @@ void Blob::boundsCorrect(void)
 	}
 }
 
+CoordVect dirs[8] = { CoordVect( 0, -1),   //N
+		      CoordVect( 1, -1),   //NE
+		      CoordVect( 1,  0),   //E
+		      CoordVect( 1, -1),   //SE
+		      CoordVect( 0, -1),   //S
+		      CoordVect(-1, -1),   //SW
+		      CoordVect(-1,  0),   //W
+		      CoordVect(-1, -1) }; //NW
+
+void Blob::perceive(void)
+{
+	double ins[Brain::inNum];
+
+	/* Perceive how many blobs and how much food are in each direction */
+	double seeLen = size*seeMult;
+	CoordVect xy = CoordVect();
+	CoordVect dim = CoordVect();
+	CoordVect curDir = CoordVect();
+	for (int d=0; d<8; d++) {
+		curDir = dirs[d];
+		if (curDir.x == -1) {
+			xy.set_x(pos.x-seeLen);
+			dim.set_x(seeLen);
+		} else if (curDir.x == 0) {
+			xy.set_x(pos);
+			dim.set_x(size);
+		} else { //curDir.x == 1
+			xy.set_x(pos.x+size);
+			dim.set_x(seeLen);
+		}
+		if (curDir.y == -1) {
+			xy.set_y(pos.y-seeLen);
+			dim.set_y(seeLen);
+		} else if (curDir.y == 0) {
+			xy.set_y(pos);
+			dim.set_y(size);
+		} else { //curDir.y == 1
+			xy.set_y(pos.y+size);
+			dim.set_y(seeLen);
+		}
+
+		ins[d] = 0.0;
+		for (std::vector<Blob>::iterator it = sim::pop.begin();
+		     it != sim::pop.end(); ++it)
+			if (testAABBAABB(xy.x, xy.y,
+					 dim.x, dim.y,
+					 it->pos.x, it->pos.y,
+					 it->size, it->size) )
+				ins[d] += 1.0;
+
+		ins[d+8] = 0.0;
+		for (std::vector<Food>::iterator it = sim::food.begin();
+		     it != sim::food.end(); ++it)
+			if (testAABBAABB(xy.x, xy.y,
+					 dim.x, dim.y,
+					 it->pos.x, it->pos.y,
+					 it->size, it->size) )
+				ins[d+8] += 1.0;
+	}
+
+	/* Perceive size */
+	ins[16] = size;
+
+	/* Perceive current direction in radians */
+	ins[17] = vel.rads();
+
+	/* Percieve if moving or not */
+	if (vel.x != 0.0 || vel.y != 0.0)
+		ins[18] = 1.0;
+	else
+		ins[18] = 0.0;
+
+	brain.feedforward(ins);
+}
+
+void Blob::act(void)
+{
+	double canMove = sigmoid(brain.outs[0]);
+	if (canMove >= 0.5) {
+		double r = (sin(brain.outs[1])+1)*M_PI;
+		CoordVect addVel(cos(r)*Blob::accel, sin(r)*Blob::accel);
+		vel.add(addVel);
+	}
+}
+
 void Blob::update(void)
 {
+	/* Perceive environment */
+	Blob::perceive();
+
+	/* Act based on stimuli */
+	Blob::act();
+
 	/* Apply friction */
 	double rads = vel.rads();
 	CoordVect fric(sim::friction*cos(rads), sim::friction*sin(rads));
@@ -226,35 +331,19 @@ void Blob::update(void)
 	vel.set(newVel);
 	newPos.add(vel);
 
-	/* Bounds correction */
-	/*
-	if (newPos.x < 0.0) {
-		newPos.set_x(0.0);
-		if (vel.x < 0.0) vel.set_x(0.0);
-		vel.set_x(0.0);
-	} else if (newPos.x + size > sim::bounds.x) {
-		newPos.set_x(sim::bounds.x - size);
-		if (vel.x > 0.0) vel.set_x(0.0);
-	}
-	if (newPos.y < 0.0) {
-		newPos.set_y(0.0);
-		if (vel.y < 0.0) vel.set_y(0.0);
-		vel.set_y(0.0);
-	} else if (newPos.y + size > sim::bounds.y) {
-		newPos.set_y(sim::bounds.y - size);
-		if (vel.y > 0.0) vel.set_y(0.0);
-	}
-	*/
-
 	/* Apply changes to position */
 	pos.set(newPos);
 	Blob::boundsCorrect();
 }
 
+
+
 Food::Food(double x_new, double y_new)
 {
 	pos = CoordVect(x_new, y_new);
 }
+
+
 
 bool testAABBAABB(double x1, double y1, double w1, double h1,
 	  double x2, double y2, double w2, double h2)
@@ -274,4 +363,9 @@ bool testAABBAABB(double x1, double y1, double w1, double h1,
 bool testAABBAABB(CoordVect &vec1, double side1, CoordVect &vec2, double side2)
 {
 	return testAABBAABB(vec1.x, vec1.y, side1, side1, vec2.x, vec2.y, side2, side2);
+}
+
+double sigmoid(double x)
+{
+	return ( 1 / (1 + exp(-x)) );
 }
