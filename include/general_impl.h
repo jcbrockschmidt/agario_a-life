@@ -16,10 +16,15 @@ inline T min(T const& a, T const& b)
 	return (a < b ? a : b);
 }
 
+inline double getSRand(void)
+{
+	return ((double)rand() / (double)RAND_MAX);
+}
+
 template <typename T>
 inline T getRand(T const x)
 {
-	return (T)((double)(x)*rand() / (RAND_MAX+1.0));
+	return (T)((double)(x)*rand()/RAND_MAX);
 }
 
 template <typename T>

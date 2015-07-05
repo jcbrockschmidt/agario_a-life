@@ -1,6 +1,8 @@
 #ifndef GENERAL_H
 #define GENERAL_H
 
+#include <stdlib.h>
+
 /**
 Returns the number with the highest value.
 
