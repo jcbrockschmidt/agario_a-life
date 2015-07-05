@@ -56,7 +56,7 @@ public:
 	/* How far a blob can see (as a multiple of its size).
 	   A blob's FOV is a square whose sides are size*(1+2*seeMult) each.
 	 */
-	static constexpr double seeMult = 3.0;
+	static constexpr double seeMult = 5.0;
 	/* How fast a blob can accelerate in any direction */
 	static constexpr double accel = 5.0;
 	/* What percentage of a blob's size is lost each round.
