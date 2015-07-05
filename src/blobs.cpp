@@ -265,7 +265,7 @@ void Blob::perceive(void)
 					 dim.x, dim.y,
 					 it->pos.x, it->pos.y,
 					 it->size, it->size) )
-				ins[d] += 1.0;
+				ins[d] += it->size;
 
 		ins[d+8] = 0.0;
 		for (std::vector<Food>::iterator it = sim::food.begin();
