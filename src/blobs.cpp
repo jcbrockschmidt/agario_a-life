@@ -143,8 +143,9 @@ void Brain::feedforward(double ins[Brain::inNum])
 
 
 
-Blob::Blob(double size_new, double x_new, double y_new)
-	: pos(x_new, y_new), vel(), brain()
+Blob::Blob(double size_new, double x_new, double y_new,
+	   double weights[Brain::inNum][Brain::outNum])
+	: pos(x_new, y_new), vel(), brain(weights)
 {
 	Blob::setSize(size_new);
 }

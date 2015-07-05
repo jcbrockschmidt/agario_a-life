@@ -66,7 +66,8 @@ public:
 	double maxVel;
 	Brain brain;
 
-	Blob(double size_new = stdSize, double x_new = 0.0, double y_new = 0.0);
+	Blob(double size_new = stdSize, double x_new = 0.0, double y_new = 0.0,
+	     double weights[Brain::inNum][Brain::outNum] = nullptr);
 	void setSize(double size_set);
 	void addSize(double size_add);
 	void setPos(double x_new, double y_new);

@@ -1,3 +1,9 @@
+/* DOIT:
+ * - Make friction a constant.
+ * - Have blobs lose energy.
+ * - Have blobs decrease in mass over time.
+ */
+ 
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -19,14 +25,15 @@ namespace sim
 
 	void init(void)
 	{
-		for (int b; b < initPopCnt; b++) {
-			double x = getRandRange(0.0, bounds.x-Blob::stdSize);
-			double y = getRandRange(0.0, bounds.y-Blob::stdSize);
+		double x, y;
+		for (int b=0; b < initPopCnt; b++) {
+			x = getRandRange(0.0, bounds.x-Blob::stdSize);
+			y = getRandRange(0.0, bounds.y-Blob::stdSize);
 			pop.push_back(Blob(Blob::stdSize, x, y));
 		}
-		for (int f; f < initFoodCnt; f++) {
-			double x = getRandRange(0.0, bounds.x-Food::size);
-			double y = getRandRange(0.0, bounds.y-Food::size);
+		for (int f=0; f < initFoodCnt; f++) {
+			x = getRandRange(0.0, bounds.x-Food::size);
+			y = getRandRange(0.0, bounds.y-Food::size);
 			food.push_back(Food(x, y));
 		}
 	}
@@ -61,6 +68,38 @@ namespace sim
 		}
 		food.erase(food.begin()+f);
 		return true;
+	}
+
+	void repopulate(void)
+	{
+		double totalSize = 0.0;
+		for (std::vector<Blob>::iterator it = pop.begin();
+		     it != pop.end(); ++it)
+			totalSize += it->size;
+		int oldPopSize = pop.size();
+		double needProb, curProb, x, y;
+		for (int i = initPopCnt-pop.size(); i > 0; --i) {
+			needProb = getRandRange(0.0, totalSize);
+			curProb = 0.0;
+			int b;
+			for (b = 0; b < oldPopSize-1; b++) {
+				curProb += pop[b].size;
+				if (curProb > needProb) break;
+			}
+			x = getRandRange(0.0, bounds.x-Blob::stdSize);
+			y = getRandRange(0.0, bounds.y-Blob::stdSize);
+			double weights[Brain::inNum][Brain::outNum];
+			/* Copy weights */
+			for (int i = 0; i < Brain::inNum; i++)
+				for (int o = 0; o < Brain::outNum; o++)
+					weights[i][o] = pop[b].brain.weights[i][o];
+			if (getSRand() <= mutateProb) {
+				/* Mutate a single weight */
+				int i = getRand(Brain::inNum);
+				int o = getRand(Brain::outNum);
+			}
+			pop.push_back(Blob(Blob::stdSize, x, y, weights));
+		}
 	}
 
 	bool doesCover(CoordVect &big_pos, double big_size,
@@ -157,6 +196,17 @@ namespace sim
 					}
 				}
 			}
+		}
+
+		/* Add new blobs for ones that have died */
+		if (pop.size() < initPopCnt)
+			repopulate();
+
+		/* Replenish food */
+		for (int f = initFoodCnt-food.size(); f > 0; --f) {
+			double x = getRandRange(0.0, bounds.x-Food::size);
+			double y = getRandRange(0.0, bounds.y-Food::size);
+			food.push_back(Food(x, y));
 		}
 	}
 }
