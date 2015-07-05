@@ -27,7 +27,8 @@ int main(int argc, char *argv[])
 		if (quit) break;
 	}
 
-	cout << "Total blobs spawned: " << sim::sumBlobs << endl;
+	cout << "Total blobs spawned:  " << sim::sumBlobs << endl;
+	cout << "Largest size reached: " << sim::peakSize << endl;
 
 	visuals::quit();
 

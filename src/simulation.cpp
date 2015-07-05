@@ -20,6 +20,7 @@ namespace sim
 	std::vector<Blob> pop;
 	std::vector<Food> food;
 	int sumBlobs;
+	double peakSize;
 
 	void init(void)
 	{
@@ -30,6 +31,7 @@ namespace sim
 			pop.push_back(Blob(Blob::stdSize, x, y));
 		}
 		sumBlobs = initPopCnt;
+		peakSize = Blob::stdSize;
 		for (int f=0; f < initFoodCnt; f++) {
 			x = getRandRange(0.0, bounds.x-Food::size);
 			y = getRandRange(0.0, bounds.y-Food::size);
@@ -136,6 +138,7 @@ namespace sim
 			if (pop[b].size < Blob::minSize)
 				kill(b--);
 			else
+				if (pop[b].size > peakSize) peakSize = pop[b].size;
 				/* Update blob if it is still alive */
 				pop[b].update();
 		}
