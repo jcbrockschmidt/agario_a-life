@@ -1,6 +1,4 @@
 /* DOIT:
- * - Have blobs lose energy.
- * - Have blobs decrease in mass over time.
  * - Add boundary perception.
  */
  
@@ -21,6 +19,7 @@ namespace sim
 {
 	std::vector<Blob> pop;
 	std::vector<Food> food;
+	int sumBlobs;
 
 	void init(void)
 	{
@@ -30,6 +29,7 @@ namespace sim
 			y = getRandRange(0.0, bounds.y-Blob::stdSize);
 			pop.push_back(Blob(Blob::stdSize, x, y));
 		}
+		sumBlobs = initPopCnt;
 		for (int f=0; f < initFoodCnt; f++) {
 			x = getRandRange(0.0, bounds.x-Food::size);
 			y = getRandRange(0.0, bounds.y-Food::size);
@@ -98,6 +98,7 @@ namespace sim
 				int o = getRand(Brain::outNum);
 			}
 			pop.push_back(Blob(Blob::stdSize, x, y, weights));
+			sumBlobs++;
 		}
 	}
 

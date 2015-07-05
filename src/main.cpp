@@ -25,8 +25,9 @@ int main(int argc, char *argv[])
 			if (ev.type == SDL_QUIT) quit = true;
 		}
 		if (quit) break;
-		SDL_Delay(50);
 	}
+
+	cout << "Total blobs spawned: " << sim::sumBlobs << endl;
 
 	visuals::quit();
 

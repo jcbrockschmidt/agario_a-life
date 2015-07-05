@@ -64,7 +64,7 @@ public:
 	   Thus, the amount of mass a blob loses each iteration
 	   will increase exponentially as it grows.
 	 */
-	static constexpr double decayRate = 0.05;
+	static constexpr double decayRate = 0.01;
 	/* The minimum size of a blob before it dies off. */
 	static constexpr double minSize = 5;
 

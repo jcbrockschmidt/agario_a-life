@@ -13,6 +13,7 @@ namespace sim
 	const double mutateProb = 0.75;
         extern std::vector<Blob> pop;
         extern std::vector<Food> food;
+	extern int sumBlobs;
 
 	/**
 	   Initializes the simulation. Should only be called once.
