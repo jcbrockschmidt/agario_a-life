@@ -294,8 +294,7 @@ void Blob::perceive(void)
 
 void Blob::act(void)
 {
-	double canMove = sigmoid(brain.outs[0]);
-	if (canMove >= 0.5) {
+	if (brain.outs[0] > 0) {
 		double r = fmod(brain.outs[1],2)*M_PI;
 		CoordVect addVel(cos(r)*Blob::accel, sin(r)*Blob::accel);
 		vel.add(addVel);
