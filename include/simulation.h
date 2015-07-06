@@ -6,12 +6,11 @@
 
 namespace sim
 {
-	const int initPopCnt = 50;
+	const int initPopCnt = 500;
 	const int initFoodCnt = 500;
 	const CoordVect bounds(3000.0, 3000.0);
 	const double friction = 0.5;
-	const double mutateProb = 0.75;
-	const double reproProbPow = 4.0;
+	const double mutateProb = 0.20;
         extern std::vector<Blob> pop;
         extern std::vector<Food> food;
 	extern int sumBlobs;

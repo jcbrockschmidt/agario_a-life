@@ -68,6 +68,8 @@ public:
 	/* The minimum size of a blob before it dies off. */
 	static constexpr double minSize = 5;
 
+	static constexpr double fit_pow_size = 4.0;
+
 	CoordVect pos;
 	CoordVect vel;
 	double size;
@@ -75,6 +77,9 @@ public:
 	Brain brain;
 	/* The greatest size a blob has reached */
 	double peakSize;
+	/* Number of ticks the blob has been alive */
+	int timeAlive;
+	double fitness;
 
 	Blob(double size_new = stdSize, double x_new = 0.0, double y_new = 0.0,
 	     double weights[Brain::inNum][Brain::outNum] = nullptr);
@@ -91,6 +96,7 @@ public:
 	void boundsCorrect(void);
 	void perceive(void);
 	void act(void);
+	void calcFitness(void);
 	void update(void);
 };
 

@@ -73,19 +73,19 @@ namespace sim
 
 	void repopulate(void)
 	{
-		double totalProb = 0.0;
+		double totalFit = 0.0;
 		for (std::vector<Blob>::iterator it = pop.begin();
 		     it != pop.end(); ++it)
-			totalProb += pow(it->peakSize, reproProbPow);
+			totalFit += it->fitness;
 		int oldPopSize = pop.size();
-		double needProb, curProb, x, y;
+		double needFit, curFit, x, y;
 		for (int i = initPopCnt-pop.size(); i > 0; --i) {
-			needProb = getRandRange(0.0, totalProb);
-			curProb = 0.0;
+			needFit = getRandRange(0.0, totalFit);
+			curFit = 0.0;
 			int b;
 			for (b = 0; b < oldPopSize-1; b++) {
-				curProb += pow(pop[b].peakSize, reproProbPow);
-				if (curProb > needProb) break;
+				curFit += pop[b].fitness;
+				if (curFit > needFit) break;
 			}
 			x = getRandRange(0.0, bounds.x-Blob::stdSize);
 			y = getRandRange(0.0, bounds.y-Blob::stdSize);
@@ -136,12 +136,14 @@ namespace sim
 		for (int b; b < pop.size(); b++) {
 			/* Decay blob */
 			pop[b].size -= pop[b].size*Blob::decayRate;
-			if (pop[b].size < Blob::minSize)
+			if (pop[b].size < Blob::minSize) {
 				kill(b--);
-			else
-				if (pop[b].size > peakSize) peakSize = pop[b].size;
+			} else {
+				if (pop[b].size > peakSize)
+					peakSize = pop[b].size;
 				/* Update blob if it is still alive */
 				pop[b].update();
+			}
 		}
 
 		/* Check for collisions between blobs and food */

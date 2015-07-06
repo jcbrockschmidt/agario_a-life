@@ -147,6 +147,8 @@ Blob::Blob(double size_new, double x_new, double y_new,
 	: pos(x_new, y_new), vel(), brain(weights)
 {
 	peakSize = 0;
+	timeAlive = 0;
+	fitness = 0;
 	Blob::setSize(size_new);
 }
 
@@ -265,7 +267,8 @@ void Blob::perceive(void)
 					 dim.x, dim.y,
 					 it->pos.x, it->pos.y,
 					 it->size, it->size) )
-				ins[d] += it->size;
+				if (it->size > ins[d])
+					ins[d] = it->size;
 
 		ins[d+8] = 0.0;
 		for (std::vector<Food>::iterator it = sim::food.begin();
@@ -299,6 +302,11 @@ void Blob::act(void)
 		CoordVect addVel(cos(r)*Blob::accel, sin(r)*Blob::accel);
 		vel.add(addVel);
 	}
+}
+
+void Blob::calcFitness(void)
+{
+	fitness = pow(peakSize,Blob::fit_pow_size) + (double)timeAlive;
 }
 
 void Blob::update(void)
@@ -335,6 +343,10 @@ void Blob::update(void)
 	/* Apply changes to position */
 	pos.set(newPos);
 	Blob::boundsCorrect();
+
+	if (size > peakSize) peakSize = size;
+	timeAlive++;
+	calcFitness();
 }
 
 
