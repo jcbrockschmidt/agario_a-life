@@ -73,18 +73,18 @@ namespace sim
 
 	void repopulate(void)
 	{
-		double totalSize = 0.0;
+		double totalProb = 0.0;
 		for (std::vector<Blob>::iterator it = pop.begin();
 		     it != pop.end(); ++it)
-			totalSize += it->peakSize;
+			totalProb += pow(it->peakSize, reproProbPow);
 		int oldPopSize = pop.size();
 		double needProb, curProb, x, y;
 		for (int i = initPopCnt-pop.size(); i > 0; --i) {
-			needProb = getRandRange(0.0, totalSize);
+			needProb = getRandRange(0.0, totalProb);
 			curProb = 0.0;
 			int b;
 			for (b = 0; b < oldPopSize-1; b++) {
-				curProb += pop[b].peakSize;
+				curProb += pow(pop[b].peakSize, reproProbPow);
 				if (curProb > needProb) break;
 			}
 			x = getRandRange(0.0, bounds.x-Blob::stdSize);
@@ -98,6 +98,7 @@ namespace sim
 				/* Mutate a single weight */
 				int i = getRand(Brain::inNum);
 				int o = getRand(Brain::outNum);
+				weights[i][o] += getRandRange(-5.0, 5.0);
 			}
 			pop.push_back(Blob(Blob::stdSize, x, y, weights));
 			sumBlobs++;
