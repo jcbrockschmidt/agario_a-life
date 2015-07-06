@@ -56,7 +56,7 @@ public:
 	/* How far a blob can see (as a multiple of its size).
 	   A blob's FOV is a square whose sides are size*(1+2*seeMult) each.
 	 */
-	static constexpr double seeMult = 5.0;
+	static constexpr double seeMult = 8.0;
 	/* How fast a blob can accelerate in any direction */
 	static constexpr double accel = 5.0;
 	/* What percentage of a blob's size is lost each round.
@@ -64,7 +64,7 @@ public:
 	   Thus, the amount of mass a blob loses each iteration
 	   will increase exponentially as it grows.
 	 */
-	static constexpr double decayRate = 0.01;
+	static constexpr double decayRate = 0.001;
 	/* The minimum size of a blob before it dies off. */
 	static constexpr double minSize = 5;
 

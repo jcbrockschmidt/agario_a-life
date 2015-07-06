@@ -7,8 +7,8 @@
 
 namespace visuals
 {
-	const int win_w = 1024;
-	const int win_h = 640;
+	const int win_w = 960;
+	const int win_h = 960;
 	const int padding = 10;
 	extern SDL_Window *win;
 	extern SDL_Renderer *ren;
