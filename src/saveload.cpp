@@ -93,7 +93,7 @@ bool _loadData(void)
 	}
 
 	in.seekg(0);
-	in.setstate(std::ifstream::goodbit);
+	in.exceptions(std::ifstream::eofbit);
 
 	double b_w, b_h;
 	int popCnt, foodCnt;
@@ -156,8 +156,8 @@ bool _loadData(void)
 		}
 	} catch (std::ifstream::failure e) {
 		cout << "Error while parsing save file: " << e.what() << endl;
-		if (in.rdstate() & std::ifstream::eofbit != 0)
-			cout << "Save file is corrupt" << endl;
+		cout << "Save file is corrupt" << endl;
+
 		in.close();
 		return false;
 	}
