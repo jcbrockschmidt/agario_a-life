@@ -1,6 +1,8 @@
 #ifndef BLOBS_H
 #define BLOBS_H
 
+#include "visuals.h"
+
 class CoordVect
 {
  public:
@@ -75,6 +77,7 @@ public:
 	double size;
 	double maxVel;
 	Brain brain;
+	Uint32 color;
 	/* The greatest size a blob has reached */
 	double peakSize;
 	/* Number of ticks the blob has been alive */

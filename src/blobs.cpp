@@ -3,6 +3,7 @@
 #include "blobs.h"
 #include "general.h"
 #include "simulation.h"
+#include "visuals.h"
 
 CoordVect::CoordVect(double x_new, double y_new)
 {
@@ -150,6 +151,7 @@ Blob::Blob(double size_new, double x_new, double y_new,
 	timeAlive = 0;
 	fitness = 0;
 	Blob::setSize(size_new);
+	color = visuals::getRandBlobColor();
 }
 
 void Blob::setSize(double size_set)

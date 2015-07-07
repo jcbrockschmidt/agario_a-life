@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include "general.h"
 #include "simulation.h"
 #include "visuals.h"
 
@@ -91,6 +92,26 @@ namespace visuals
 	        SDL_Quit();
 	}
 
+	Uint32 getRandBlobColor(void)
+	{
+		Uint32 color;
+		Uint32 RGB[3] = { getRand((Uint32)0xff000000),
+				  getRand((Uint32)0xff000000),
+				  getRand((Uint32)0xff000000) };
+		/* Make sure new color is not too bright */
+		if (RGB[0] > 0xcc000000 && RGB[1] > 0xcc000000 && RGB[2] > 0xcc000000)
+			RGB[getRand(3)] = getRand((Uint32)0xcc000000);
+		/* Make sure new color is not too dark */
+		if (RGB[0] < 0x55000000 && RGB[1] < 0x55000000 && RGB[2] < 0x55000000)
+			RGB[getRand(3)] = getRandRange((Uint32)0x55000000, (Uint32)0xff000000);
+		/* Order bytes */
+		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			color = (Uint32)0x000000ff | RGB[0] | (RGB[1]>>8) | (RGB[2]>>16);
+		else
+			color = (Uint32)0xff000000 | (RGB[2]>>8) | (RGB[1]>>16) | (RGB[2]>>24);
+		return color;
+	}
+
 	void draw(void)
 	{
 		SDL_RenderClear(ren);
@@ -145,7 +166,7 @@ namespace visuals
 				curRect.y = (int)(it->pos.y * transMult);
 				curRect.w = std::max(1, (int)(it->size*transMult));
 				curRect.h = std::max(1, (int)(it->size*transMult));
-				SDL_FillRect(blobSurf, &curRect, colors::blue);
+				SDL_FillRect(blobSurf, &curRect, it->color);
 			}
 			SDL_Texture *blobTex =
 				SDL_CreateTextureFromSurface(ren, blobSurf);

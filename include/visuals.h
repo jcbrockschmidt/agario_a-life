@@ -24,6 +24,7 @@ namespace visuals
 
 	int init(void);
 	void quit(void);
+	Uint32 getRandBlobColor(void);
 	void draw(void);
 }
 
