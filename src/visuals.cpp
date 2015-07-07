@@ -15,6 +15,14 @@ namespace visuals
 	SDL_Rect bgRect;
 	SDL_Rect blobRect;
 	double transMult;
+	Uint32 blobColors[blobColors_size] = {
+		colors::red, colors::green,
+		colors::blue, colors::redorange,
+		colors::orange, colors::yelloworange,
+		colors::yellowgreen, colors::bluegreen,
+		colors::blueviolet, colors::violet,
+		colors::redviolet, colors::cyan
+	};
 
 	int init(void)
 	{
@@ -94,22 +102,7 @@ namespace visuals
 
 	Uint32 getRandBlobColor(void)
 	{
-		Uint32 color;
-		Uint32 RGB[3] = { getRand((Uint32)0xff000000),
-				  getRand((Uint32)0xff000000),
-				  getRand((Uint32)0xff000000) };
-		/* Make sure new color is not too bright */
-		if (RGB[0] > 0xcc000000 && RGB[1] > 0xcc000000 && RGB[2] > 0xcc000000)
-			RGB[getRand(3)] = getRand((Uint32)0xcc000000);
-		/* Make sure new color is not too dark */
-		if (RGB[0] < 0x55000000 && RGB[1] < 0x55000000 && RGB[2] < 0x55000000)
-			RGB[getRand(3)] = getRandRange((Uint32)0x55000000, (Uint32)0xff000000);
-		/* Order bytes */
-		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-			color = (Uint32)0x000000ff | RGB[0] | (RGB[1]>>8) | (RGB[2]>>16);
-		else
-			color = (Uint32)0xff000000 | (RGB[2]>>8) | (RGB[1]>>16) | (RGB[2]>>24);
-		return color;
+		return blobColors[getRand(blobColors_size)];
 	}
 
 	void draw(void)
@@ -196,9 +189,19 @@ namespace visuals {
 	Uint32 bmask = 0x0000ff00;
 	Uint32 amask = 0x000000ff;
 	namespace colors {
-		Uint32 black = 0x000000ff;
-		Uint32 red = 0xff0000ff;
-		Uint32 blue = 0x0000ffff;
+		Uint32 black        = 0x000000ff;
+		Uint32 red          = 0xff0000ff;
+		Uint32 green        = 0x00ff00ff;
+		Uint32 blue         = 0x0000ffff;
+		Uint32 redorange    = 0xff4500ff;
+		Uint32 orange       = 0xffa500ff;
+		Uint32 yelloworange = 0xffcc00ff;
+		Uint32 yellowgreen  = 0xadff2fff;
+		Uint32 bluegreen    = 0x34ddddff;
+		Uint32 blueviolet   = 0x4c50a9ff;
+		Uint32 violet       = 0x551a8bff;
+		Uint32 redviolet    = 0xf43e71ff;
+		Uint32 cyan         = 0x00ffffff;
 	}
 }
 #else
@@ -208,9 +211,19 @@ namespace visuals {
 	Uint32 bmask = 0x00ff0000;
 	Uint32 amask = 0xff000000;
 	namespace colors {
-		Uint32 black = 0xff000000;
-		Uint32 red = 0xff0000ff;
-		Uint32 blue = 0xffff0000;
+		Uint32 black        = 0xff000000;
+		Uint32 red          = 0xff0000ff;
+		Uint32 green        = 0xff00ff00;
+		Uint32 blue         = 0xffff0000;
+		Uint32 redorange    = 0xff0045ff;
+		Uint32 orange       = 0xff00a5ff;
+		Uint32 yelloworange = 0xff00ccff;
+		Uint32 yellowgreen  = 0xff2fffad;
+		Uint32 bluegreen    = 0xffdddd34;
+		Uint32 blueviolet   = 0xffa9504c;
+		Uint32 violet       = 0xff8b1a55;
+		Uint32 redviolet    = 0xff713ef4;
+		Uint32 cyan         = 0xffffff00;
 	}
 }
 #endif
