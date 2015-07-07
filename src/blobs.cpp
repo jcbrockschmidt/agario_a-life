@@ -290,14 +290,9 @@ void Blob::perceive(void)
 	/* Perceive size */
 	ins[16] = size;
 
-	/* Perceive current direction in radians */
-	ins[17] = vel.rads();
-
-	/* Percieve if moving or not */
-	if (vel.x != 0.0 || vel.y != 0.0)
-		ins[18] = 1.0;
-	else
-		ins[18] = 0.0;
+	/* Perceive velocity */
+	ins[17] = vel.x;
+	ins[18] = vel.y;
 
 	brain.feedforward(ins);
 }
