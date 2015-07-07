@@ -201,12 +201,9 @@ namespace sim
 					big.boundsCorrect();
 					kill(small_i);
 					/* Shift iterator values if needed */
-					if (small_i == b1) {
+					if (small_i == b1)
 						b1--;
-						/* b1 will always be smaller
-						   than b2 */
-						if (small_i <= b2) b2--;
-					}
+					b2--;
 				}
 			}
 		}
