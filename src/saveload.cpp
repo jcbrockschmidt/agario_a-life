@@ -2,7 +2,6 @@
  * - Format of save file does not accomadate for the fact that different
  *   platforms can have a different default number of bytes for each
  *   variable type.
- * - Check for EOF while loading data.
  */
 
 #include <fstream>
@@ -151,6 +150,8 @@ bool _loadData(void)
 		/* Read data for food */
 		food.clear();
 		for (int f=0; f<curFoodCnt; f++) {
+			in.read(reinterpret_cast<char *>(&x), sizeof(double));
+			in.read(reinterpret_cast<char *>(&y), sizeof(double));
 			food.push_back(Food(x, y));
 		}
 	} catch (std::ifstream::failure e) {
