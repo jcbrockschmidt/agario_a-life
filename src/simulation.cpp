@@ -1,7 +1,3 @@
-/* DOIT:
- * - Add boundary perception.
- */
- 
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -15,34 +11,31 @@
 using std::cout;
 using std::endl;
 
+void _spawn(void);
+
 namespace sim
 {
+	CoordVect bounds;
+	int initPopCnt;
+	int initFoodCnt;
 	std::vector<Blob> pop;
 	std::vector<Food> food;
 	int sumBlobs;
 	double peakSize;
 
-	void init(void)
+	void init(double bounds_w, double bounds_h, int popCnt, int foodCnt)
 	{
-		double x, y;
-		for (int b=0; b < initPopCnt; b++) {
-			x = getRandRange(0.0, bounds.x-Blob::stdSize);
-			y = getRandRange(0.0, bounds.y-Blob::stdSize);
-			pop.push_back(Blob(Blob::stdSize, x, y));
-		}
-		sumBlobs = initPopCnt;
-		peakSize = Blob::stdSize;
-		for (int f=0; f < initFoodCnt; f++) {
-			x = getRandRange(0.0, bounds.x-Food::size);
-			y = getRandRange(0.0, bounds.y-Food::size);
-			food.push_back(Food(x, y));
-		}
+		bounds = CoordVect(bounds_w, bounds_h);
+		initPopCnt = popCnt;
+		initFoodCnt = foodCnt;
+		_spawn();
 	}
 
 	void reset(void)
 	{
 		pop.clear();
-		sim::init();
+		food.clear();
+		_spawn();
 	}
 
 	bool kill(int b)
@@ -218,5 +211,23 @@ namespace sim
 			double y = getRandRange(0.0, bounds.y-Food::size);
 			food.push_back(Food(x, y));
 		}
+	}
+}
+
+void _spawn(void)
+{
+	using namespace sim;
+	double x, y;
+	for (int b=0; b < initPopCnt; b++) {
+		x = getRandRange(0.0, bounds.x-Blob::stdSize);
+		y = getRandRange(0.0, bounds.y-Blob::stdSize);
+		pop.push_back(Blob(Blob::stdSize, x, y));
+	}
+	sumBlobs = initPopCnt;
+	peakSize = Blob::stdSize;
+	for (int f=0; f < initFoodCnt; f++) {
+		x = getRandRange(0.0, bounds.x-Food::size);
+		y = getRandRange(0.0, bounds.y-Food::size);
+		food.push_back(Food(x, y));
 	}
 }

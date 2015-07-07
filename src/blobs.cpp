@@ -1,3 +1,8 @@
+/* DOIT:
+ * - Add boundary perception.
+ * - Add short-term memory.
+ */
+ 
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "blobs.h"

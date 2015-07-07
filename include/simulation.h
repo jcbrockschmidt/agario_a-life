@@ -6,11 +6,11 @@
 
 namespace sim
 {
-	const int initPopCnt = 500;
-	const int initFoodCnt = 500;
-	const CoordVect bounds(3000.0, 3000.0);
 	const double friction = 0.5;
 	const double mutateProb = 0.20;
+	extern CoordVect bounds;
+	extern int initPopCnt;
+	extern int initFoodCnt;
         extern std::vector<Blob> pop;
         extern std::vector<Food> food;
 	extern int sumBlobs;
@@ -18,8 +18,13 @@ namespace sim
 
 	/**
 	   Initializes the simulation. Should only be called once.
+
+	   @param bound_w Width of outer boundary.
+	   @param bound_h Height of outer boundary.
+	   @param popCnt Number of blobs in simulation.
+	   @param foodCnt Number of food pellets in simulation.
 	*/
-	void init(void);
+	void init(double bound_w, double bound_h, int popCnt, int foodCnt);
 
 	/**
 	   Resets/re-initializes simulation.
