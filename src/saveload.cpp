@@ -2,6 +2,7 @@
  * - Format of save file does not accomadate for the fact that different
  *   platforms can have a different default number of bytes for each
  *   variable type.
+ * - Save blob memory queues.
  */
 
 #include <fstream>
@@ -12,71 +13,65 @@
 
 using std::cout;
 using std::endl;
+using namespace saveload;
 
-bool _loadData(void);
-
-namespace saveload {
-	bool saveData(void)
-	{
-		std::ofstream out(filename, std::ifstream::binary);
-		if (!out) {
-			cout << "Error opening '" << filename << "' for writing" << endl;
-			return false;
-		}
-
-		/* Write file format version */
-		out.write(reinterpret_cast<const char *>(&version), sizeof(uint8_t));
-
-		/* Write simulation parameter data */
-		out.write(reinterpret_cast<const char *>(&sim::bounds.x), sizeof(double));
-		out.write(reinterpret_cast<const char *>(&sim::bounds.y), sizeof(double));
-		out.write(reinterpret_cast<const char *>(&sim::initPopCnt), sizeof(int));
-		out.write(reinterpret_cast<const char *>(&sim::initFoodCnt), sizeof(int));
-
-		/* Write other data */
-		out.write(reinterpret_cast<const char *>(&sim::sumBlobs), sizeof(int));
-		out.write(reinterpret_cast<const char *>(&sim::peakSize), sizeof(double));
-		int curPopCnt = sim::pop.size();
-		out.write(reinterpret_cast<const char *>(&curPopCnt), sizeof(int));
-	        int curFoodCnt = sim::food.size();
-		out.write(reinterpret_cast<const char *>(&curFoodCnt), sizeof(int));
-
-		/* Write blob data */
-		for (std::vector<Blob>::iterator it=sim::pop.begin();
-		     it != sim::pop.end(); ++it) {
-			out.write(reinterpret_cast<const char *>(&it->size), sizeof(double));
-			out.write(reinterpret_cast<const char *>(&it->pos.x), sizeof(double));
-			out.write(reinterpret_cast<const char *>(&it->pos.y), sizeof(double));
-			out.write(reinterpret_cast<const char *>(&it->vel.x), sizeof(double));
-			out.write(reinterpret_cast<const char *>(&it->vel.y), sizeof(double));
-			for (int i=0; i<Brain::inNum; i++)
-				for (int o=0; o<Brain::outNum; o++)
-					out.write(reinterpret_cast<const char *>(&it->brain.weights[i][o]),
-						  sizeof(double));
-		}
-
-		/* Write food data */
-		for (std::vector<Food>::iterator it=sim::food.begin();
-		     it != sim::food.end(); ++it) {
-			out.write(reinterpret_cast<const char *>(&it->pos.x), sizeof(double));
-			out.write(reinterpret_cast<const char *>(&it->pos.y), sizeof(double));
-		}
-
-		out.close();
-		return true;
+bool saveload::saveData(void)
+{
+	std::ofstream out(filename, std::ifstream::binary);
+	if (!out) {
+		cout << "Error opening '" << filename << "' for writing" << endl;
+		return false;
 	}
 
-	bool loadData(void)
-	{
-		/* Use helper function to avoid excessive tabbing */
-		return _loadData();
+	/* Write file format version */
+	out.write(reinterpret_cast<const char *>(&version), sizeof(uint8_t));
+
+	/* Write simulation parameter data */
+	out.write(reinterpret_cast<const char *>(&sim::bounds.x), sizeof(double));
+	out.write(reinterpret_cast<const char *>(&sim::bounds.y), sizeof(double));
+	out.write(reinterpret_cast<const char *>(&sim::initPopCnt), sizeof(int));
+	out.write(reinterpret_cast<const char *>(&sim::initFoodCnt), sizeof(int));
+
+	/* Write other data */
+	out.write(reinterpret_cast<const char *>(&sim::sumBlobs), sizeof(int));
+	out.write(reinterpret_cast<const char *>(&sim::peakSize), sizeof(double));
+	int curPopCnt = sim::pop.size();
+	out.write(reinterpret_cast<const char *>(&curPopCnt), sizeof(int));
+	int curFoodCnt = sim::food.size();
+	out.write(reinterpret_cast<const char *>(&curFoodCnt), sizeof(int));
+
+	/* Write blob data */
+	int i, o;
+	for (std::vector<Blob>::iterator it=sim::pop.begin();
+	     it != sim::pop.end(); ++it) {
+		out.write(reinterpret_cast<const char *>(&it->size), sizeof(double));
+		out.write(reinterpret_cast<const char *>(&it->pos.x), sizeof(double));
+		out.write(reinterpret_cast<const char *>(&it->pos.y), sizeof(double));
+		out.write(reinterpret_cast<const char *>(&it->vel.x), sizeof(double));
+		out.write(reinterpret_cast<const char *>(&it->vel.y), sizeof(double));
+		for (i=0; i<Brain::inNum; i++)
+			for (o=0; o<Brain::outNum; o++)
+				out.write(reinterpret_cast<const char *>(&it->brain.weights[i][o]),
+					  sizeof(double));
+		for (i=0; i<Brain::memNum; i++)
+			for (o=0; o<Brain::memOffset[i]; o++)
+				out.write(reinterpret_cast<const char *>(&it->brain.mem[i][o]),
+					  sizeof(double));
 	}
+
+	/* Write food data */
+	for (std::vector<Food>::iterator it=sim::food.begin();
+	     it != sim::food.end(); ++it) {
+		out.write(reinterpret_cast<const char *>(&it->pos.x), sizeof(double));
+		out.write(reinterpret_cast<const char *>(&it->pos.y), sizeof(double));
+	}
+
+	out.close();
+	return true;
 }
 
-bool _loadData(void)
+bool saveload::loadData(void)
 {
-	using namespace saveload;
-
 	std::ifstream in(filename, std::ifstream::binary);
 	if (!in) {
 		cout << "Error opening '" << filename << "' for reading" << endl;
@@ -132,23 +127,26 @@ bool _loadData(void)
 		/* Read data for blobs */
 		double size, x, y, vel_x, vel_y;
 		double weights[Brain::inNum][Brain::outNum];
-		pop.clear();
+		int i, o;
 		for (int b=0; b<curPopCnt; b++) {
 			in.read(reinterpret_cast<char *>(&size), sizeof(double));
 			in.read(reinterpret_cast<char *>(&x), sizeof(double));
 			in.read(reinterpret_cast<char *>(&y), sizeof(double));
 			in.read(reinterpret_cast<char *>(&vel_x), sizeof(double));
 			in.read(reinterpret_cast<char *>(&vel_y), sizeof(double));
-			for (int i=0; i<Brain::inNum; i++)
-				for (int o=0; o<Brain::outNum; o++)
+			for (i=0; i<Brain::inNum; i++)
+				for (o=0; o<Brain::outNum; o++)
 					in.read(reinterpret_cast<char *>(&weights[i][o]),
 						sizeof(double));
 			pop.push_back(Blob(size, x, y, weights));
 			pop[b].vel.set(vel_x, vel_y);
+			for (i=0; i<Brain::memNum; i++)
+				for (o=0; o<Brain::memOffset[i]; o++)
+					in.read(reinterpret_cast<char *>(&pop[b].brain.mem[i][o]),
+						  sizeof(double));
 		}
 
 		/* Read data for food */
-		food.clear();
 		for (int f=0; f<curFoodCnt; f++) {
 			in.read(reinterpret_cast<char *>(&x), sizeof(double));
 			in.read(reinterpret_cast<char *>(&y), sizeof(double));

@@ -123,26 +123,48 @@ double CoordVect::rads(void)
 
 
 
+const unsigned int Brain::memOffset[memNum] = {1, 2, 4, 8, 16, 32};
+
 Brain::Brain(double weights_init[Brain::inNum][Brain::outNum])
 {
+	int i,o;
 	if (weights_init == nullptr) {
-		for (int i=0; i<inNum; i++)
-			for (int o=0; o<outNum; o++)
+		for (i=0; i<inNum; i++)
+			for (o=0; o<outNum; o++)
 				weights[i][o] = getRandRange(-5.0, 5.0);
 	} else {
-		for (int i=0; i<inNum; i++)
-			for (int o=0; o<outNum; o++)
+		for (i=0; i<inNum; i++)
+			for (o=0; o<outNum; o++)
 				weights[i][o] = weights_init[i][o];
 	}
-	for (int o=0; o<outNum; o++) outs[o] = 0.0;
+	for (o=0; o<outNum; o++) outs[o] = 0.0;
+	for (i=0; i<memNum; i++) mem[i] = new double[memOffset[i]]();
 }
 
-void Brain::feedforward(double ins[Brain::inNum])
+Brain::~Brain(void)
 {
-	for (int o=0; o<outNum; o++) {
+	/* FIX: this does not work for some reason
+	for (int m=0; m<memNum; m++) {
+		delete[] mem[m];
+	}
+	*/
+	return;
+}
+
+void Brain::feedforward(double ins[Brain::inNum_reg])
+{
+	int i, o;
+	for (o=0; o<outNum; o++) {
 	        outs[o] = 0.0;
-		for (int i=0; i<inNum; i++)
+		for (i=0; i<inNum; i++)
 			outs[o] += ins[i]*weights[i][o];
+		for (i=0; i<memNum; i++)
+			outs[o] += mem[i][memOffset[i]-1] *
+				weights[inNum_reg+i][o];
+	}
+	for (int i=0; i<memNum; i++) {
+		for (o=memOffset[i]-1; o>0; --o) mem[i][o] = mem[i][o-1];
+		mem[i][0] = outs[inNum_reg+o];
 	}
 }
 
@@ -237,7 +259,7 @@ CoordVect dirs[8] = { CoordVect( 0, -1),   //N
 
 void Blob::perceive(void)
 {
-	double ins[Brain::inNum];
+	double ins[Brain::inNum_reg];
 
 	/* Perceive how many blobs and how much food are in each direction */
 	double seeLen = size*seeMult;

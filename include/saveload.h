@@ -5,7 +5,7 @@
 #include <string>
 
 namespace saveload {
-	const uint8_t version = 1;
+	const uint8_t version = 2;
 	const std::string filename = "save.dat";
 
 	/**

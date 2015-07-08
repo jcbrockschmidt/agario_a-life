@@ -32,14 +32,20 @@ class CoordVect
 class Brain
 {
  public:
-	static constexpr int inNum = 19;
-	static constexpr int outNum = 2;
+	static constexpr int inNum_reg = 19;
+	static constexpr int outNum_reg = 2;
+	static constexpr int memNum = 6;
+	static const unsigned int memOffset[memNum];
+	static constexpr int inNum = inNum_reg + memNum;
+	static constexpr int outNum = outNum_reg + memNum;
 
 	double weights[inNum][outNum];
 	double outs[outNum];
+	double *mem[memNum];
 
 	Brain(double weights_init[inNum][outNum] = nullptr);
-	void feedforward(double ins[inNum]);
+	~Brain(void);
+	void feedforward(double ins[inNum_reg]);
 };
 
 class Blob
@@ -55,8 +61,8 @@ public:
 	   Bigger blob must cover *at least* this percent of a smaller blob.
 	 */
 	static constexpr double howCover = 0.50;
-	/* How far a blob can see (as a multiple of its size).
-	   A blob's FOV is a square whose sides are size*(1+2*seeMult) each.
+	/* How far a blob can see (as a multiple of its size). A blob's FOV is
+	   a square whose sides are size*(1+2*seeMult) long each.
 	 */
 	static constexpr double seeMult = 8.0;
 	/* How fast a blob can accelerate in any direction */

@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
 	if (!saveload::loadData()) {
 		cout << "Could not load simulation data" << endl;
-		sim::init(3000.0, 3000.0, 50, 500);
+		sim::init(1000.0, 1000.0, 15, 50);
 	}
 	visuals::init();
 	visuals::draw();
