@@ -22,6 +22,7 @@ namespace sim
 	std::vector<Food> food;
 	int sumBlobs;
 	double peakSize;
+	unsigned int curLongestLife;
 
 	void init(double bounds_w, double bounds_h, int popCnt, int foodCnt)
 	{
@@ -29,6 +30,7 @@ namespace sim
 		initPopCnt = popCnt;
 		initFoodCnt = foodCnt;
 		_spawn();
+		curLongestLife = 0;
 	}
 
 	void reset(void)
@@ -125,6 +127,17 @@ namespace sim
 
 	void update(void)
 	{
+		/* Get current longest time alive */
+		curLongestLife = 0;
+		for (std::vector<Blob>::iterator it = pop.begin();
+		     it != pop.end(); ++it)
+			if (it->timeAlive > curLongestLife)
+			        curLongestLife = it->timeAlive;
+		/* Add 1 to current time alive since blob will
+		   update its fitness value using curTimeAlive
+		   after incrementing its own time alive */
+		curLongestLife++;
+
 		/* Update all blobs */
 		for (int b; b < pop.size(); b++) {
 			/* Decay blob */

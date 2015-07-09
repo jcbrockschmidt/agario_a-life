@@ -15,6 +15,7 @@ namespace sim
         extern std::vector<Food> food;
 	extern int sumBlobs;
 	extern double peakSize;
+	extern unsigned int curLongestLife;
 
 	/**
 	   Initializes the simulation. Should only be called once.

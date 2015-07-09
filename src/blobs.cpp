@@ -328,9 +328,13 @@ void Blob::act(void)
 	}
 }
 
+const double _fit_time_max = 50.0;
+const double _fit_time_asymp = 51.0;
+const double _fit_time_b = -(_fit_time_max-_fit_time_asymp)/_fit_time_asymp;
 void Blob::calcFitness(void)
 {
-	fitness = pow(peakSize,Blob::fit_pow_size) + (double)timeAlive;
+	double b = pow(_fit_time_b, 1.0/sim::curLongestLife);
+	fitness = peakSize + (-51.0*pow(b,(double)timeAlive)+51.0);
 }
 
 void Blob::update(void)

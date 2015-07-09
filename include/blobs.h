@@ -76,8 +76,6 @@ public:
 	/* The minimum size of a blob before it dies off. */
 	static constexpr double minSize = 5;
 
-	static constexpr double fit_pow_size = 4.0;
-
 	CoordVect pos;
 	CoordVect vel;
 	double size;
@@ -87,7 +85,7 @@ public:
 	/* The greatest size a blob has reached */
 	double peakSize;
 	/* Number of ticks the blob has been alive */
-	int timeAlive;
+	unsigned int timeAlive;
 	double fitness;
 
 	Blob(double size_new = stdSize, double x_new = 0.0, double y_new = 0.0,
