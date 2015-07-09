@@ -162,9 +162,10 @@ void Brain::feedforward(double ins[Brain::inNum_reg])
 			outs[o] += mem[i][memOffset[i]-1] *
 				weights[inNum_reg+i][o];
 	}
-	for (int i=0; i<memNum; i++) {
-		for (o=memOffset[i]-1; o>0; --o) mem[i][o] = mem[i][o-1];
-		mem[i][0] = outs[inNum_reg+o];
+	for (i=0; i<memNum; i++) {
+		outs[inNum_reg+i] = sigmoid(outs[inNum_reg+i]);
+		for (o=memOffset[i]-1; o>0; mem[i][o] = mem[i][--o]);
+		mem[i][0] = outs[inNum_reg+i];
 	}
 }
 
