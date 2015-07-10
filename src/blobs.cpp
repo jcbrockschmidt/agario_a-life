@@ -10,6 +10,10 @@
 #include "simulation.h"
 #include "visuals.h"
 
+//DEBUG
+#include <iostream>
+//EOF DEBUG
+
 CoordVect::CoordVect(double x_new, double y_new)
 {
 	CoordVect::set(x_new, y_new);
@@ -162,9 +166,10 @@ void Brain::feedforward(double ins[Brain::inNum_reg])
 			outs[o] += mem[i][memOffset[i]-1] *
 				weights[inNum_reg+i][o];
 	}
-	for (int i=0; i<memNum; i++) {
-		for (o=memOffset[i]-1; o>0; --o) mem[i][o] = mem[i][o-1];
-		mem[i][0] = outs[inNum_reg+o];
+	for (o=0; o<memNum; o++) {
+		outs[outNum_reg+o] = sigmoid(outs[outNum_reg+o]);
+		for (i=memOffset[o]-1; i>0; --i) mem[o][i] = mem[o][i-1];
+		mem[o][0] = outs[outNum_reg+o];
 	}
 }
 
