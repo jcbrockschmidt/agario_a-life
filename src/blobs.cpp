@@ -10,10 +10,6 @@
 #include "simulation.h"
 #include "visuals.h"
 
-//DEBUG
-#include <iostream>
-//EOF DEBUG
-
 CoordVect::CoordVect(double x_new, double y_new)
 {
 	CoordVect::set(x_new, y_new);
@@ -327,7 +323,11 @@ void Blob::perceive(void)
 void Blob::act(void)
 {
 	if (brain.outs[0] > 0) {
-		double r = fmod(brain.outs[1],2)*M_PI;
+		/* Reduce output to a more managable number with frexp,
+		   [0.5,1)
+		*/
+		int exp; //Needed for frexp
+		double r = (frexp(brain.outs[1], &exp)-0.5) * 4*M_PI;
 		CoordVect addVel(cos(r)*Blob::accel, sin(r)*Blob::accel);
 		vel.add(addVel);
 	}
