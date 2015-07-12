@@ -1,6 +1,5 @@
 /* DOIT:
  * - Add boundary perception.
- * - Add short-term memory.
  */
  
 #define _USE_MATH_DEFINES
@@ -323,11 +322,9 @@ void Blob::perceive(void)
 void Blob::act(void)
 {
 	if (brain.outs[0] > 0) {
-		/* Reduce output to a more managable number with frexp,
-		   [0.5,1)
-		*/
-		int exp; //Needed for frexp
-		double r = (frexp(brain.outs[1], &exp)-0.5) * 4*M_PI;
+		double r = fabs(brain.outs[1]);
+		double exp = (r < 10) ? 0 : floor(log10(r));
+		r = (r/pow(10, exp) / 5.0) * M_PI;
 		CoordVect addVel(cos(r)*Blob::accel, sin(r)*Blob::accel);
 		vel.add(addVel);
 	}
