@@ -133,23 +133,24 @@ namespace sim
 		     it != pop.end(); ++it)
 			if (it->timeAlive > curLongestLife)
 			        curLongestLife = it->timeAlive;
-		/* Add 1 to current time alive since blob will
+		/* Add 1 to current time alive since each blob will
 		   update its fitness value using curTimeAlive
 		   after incrementing its own time alive */
 		curLongestLife++;
 
 		/* Update all blobs */
-		for (int b; b < pop.size(); b++) {
+		for (int b = 0; b < pop.size(); ) {
 			/* Decay blob */
-			pop[b].size -= pop[b].size*Blob::decayRate;
+			pop[b].addSize(-pop[b].size*Blob::decayRate);
 			if (pop[b].size < Blob::minSize) {
-				kill(b--);
-			} else {
-				if (pop[b].size > peakSize)
-					peakSize = pop[b].size;
-				/* Update blob if it is still alive */
-				pop[b].update();
+				kill(b);
+				continue;
 			}
+
+			if (pop[b].size > peakSize)
+				peakSize = pop[b].size;
+			/* Update blob if it is still alive */
+			pop[b++].update();
 		}
 
 		/* Check for collisions between blobs and food */
@@ -219,9 +220,10 @@ namespace sim
 			repopulate();
 
 		/* Replenish food */
+		double x, y;
 		for (int f = initFoodCnt-food.size(); f > 0; --f) {
-			double x = getRandRange(0.0, bounds.x-Food::size);
-			double y = getRandRange(0.0, bounds.y-Food::size);
+			x = getRandRange(0.0, bounds.x-Food::size);
+			y = getRandRange(0.0, bounds.y-Food::size);
 			food.push_back(Food(x, y));
 		}
 	}
