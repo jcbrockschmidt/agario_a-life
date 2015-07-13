@@ -298,6 +298,7 @@ void Blob::perceive(void)
 					 it->size, it->size) )
 				if (it->size > ins[d])
 					ins[d] = it->size;
+		ins[d] = 1.0/(ins[d]+1.0);
 
 		ins[d+8] = 0.0;
 		for (std::vector<Food>::iterator it = sim::food.begin();
@@ -307,14 +308,15 @@ void Blob::perceive(void)
 					 it->pos.x, it->pos.y,
 					 it->size, it->size) )
 				ins[d+8] += 1.0;
+		ins[d+8] += 1.0/(ins[d+8]+1.0);
 	}
 
-	/* Perceive size */
-	ins[16] = size;
+	/* Perceive own size */
+	ins[16] = 1.0/(size+1.0);
 
 	/* Perceive velocity */
-	ins[17] = vel.x;
-	ins[18] = vel.y;
+	ins[17] = (vel.x > 0) ? 1.0/(vel.x+1.0) : 1.0/(vel.x-1.0);
+	ins[18] = (vel.y > 0) ? 1.0/(vel.y+1.0) : 1.0/(vel.y-1.0);
 
 	brain.feedforward(ins);
 }
